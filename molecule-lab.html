@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Molecule Model Generator</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#11161f; --line:#1e2632; --text:#e8ecf3; --muted:#8b96a8;
+    --accent:#5ec8f8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;overflow:hidden;}
+  #app{display:flex;flex:1;min-height:0;width:100%;}
+  #canvasWrap{flex:1;position:relative;}
+  canvas{display:block;width:100%;height:100%;}
+  #panel{width:300px;background:var(--panel);border-left:1px solid var(--line);
+    padding:20px;overflow-y:auto;flex-shrink:0;}
+  h1{font-size:16px;margin:0 0 4px;letter-spacing:.02em;}
+  .sub{color:var(--muted);font-size:12px;margin-bottom:16px;}
+  label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--muted);margin:14px 0 6px;}
+  select,input[type=text]{width:100%;background:#0d1117;color:var(--text);
+    border:1px solid var(--line);border-radius:6px;padding:8px;font-size:14px;}
+  select{cursor:pointer;}
+  .tabs{display:flex;gap:6px;margin-top:4px;}
+  .tabBtn{flex:1;background:#0d1117;border:1px solid var(--line);color:var(--muted);
+    border-radius:6px;padding:8px 6px;font-size:12px;cursor:pointer;text-align:center;}
+  .tabBtn.active{color:var(--text);border-color:var(--accent);background:#132330;}
+  .smilesRow{display:flex;gap:6px;margin-top:8px;}
+  .smilesRow input{flex:1;}
+  .smilesRow button{background:var(--accent);border:none;color:#0b0e14;font-weight:600;
+    border-radius:6px;padding:0 14px;cursor:pointer;font-size:13px;}
+  .smilesRow button:hover{opacity:0.85;}
+  #smilesError{font-size:11px;color:#f45b69;margin-top:6px;min-height:14px;}
+  #formulaBadge{font-size:30px;font-weight:700;line-height:1;margin-top:6px;}
+  #nameBadge{font-size:13px;color:var(--muted);}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+  .stat{background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:10px;}
+  .stat .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+  .stat .v{font-size:18px;font-weight:600;margin-top:2px;}
+  #legend{margin-top:14px;}
+  .legendRow{display:flex;align-items:center;gap:8px;font-size:12px;padding:3px 0;color:var(--muted);}
+  .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+  .toggleRow{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;}
+  .hint{font-size:11px;color:var(--muted);margin-top:18px;line-height:1.5;border-top:1px solid var(--line);padding-top:12px;}
+  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;}
+  .hidden{display:none !important;}
+  .examples{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;}
+  .examples b{color:var(--accent);cursor:pointer;}
+
+/* ===== injected: site nav header for lab tool pages ===== */
+:root{
+  --gold:#E8B75B; --physics:#7C8CFF; --chem:#38D6C0; --bio:#FF8A65;
+  --grid-line:rgba(255,255,255,0.08);
+  --display: 'Space Grotesk', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+header{flex-shrink:0; background:rgba(10,14,20,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--grid-line); position:relative; z-index:100;}
+header nav{display:flex; align-items:center; justify-content:space-between; padding:12px 20px; max-width:1400px; margin:0 auto;}
+header .brand{display:flex; align-items:center; gap:9px; font-family:var(--display); font-weight:700; font-size:16px; color:#e8ecf3;}
+header .brand-mark{width:22px; height:22px;}
+header .nav-links{display:flex; gap:22px; font-size:15px; color:#8b96a8; align-items:center;}
+header .nav-links a:hover{color:#e8ecf3;}
+header .nav-links a.current{color:#e8ecf3;}
+header .nav-cta{background:var(--gold); color:#151109; font-weight:600; font-size:15px; padding:10px 18px; border-radius:100px; border:none;}
+header .nav-toggle{display:none; background:none; border:none; color:#e8ecf3; font-size:24px;}
+@media(max-width:860px){
+  header .nav-links{position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:flex-start; background:#11161f; padding:16px 20px; gap:14px; border-bottom:1px solid var(--grid-line); display:none;}
+  header .nav-links.open{display:flex;}
+  header .nav-toggle{display:block;}
+}
+body.lab-tool-page{display:flex; flex-direction:column; height:100vh; overflow:hidden;}
+</style>
+
+<link rel="canonical" href="https://academy.gravitonlaboratories.workers.dev/molecule-lab.html">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Molecule Model Generator — an interactive 3D tool from Graviton Academy's science lab.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Molecule Model Generator — Graviton Academy">
+<meta property="og:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
+<meta property="og:url" content="https://academy.gravitonlaboratories.workers.dev/molecule-lab.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="lab-tool-page">
+<style>html.embedded header{display:none;} html.embedded .breadcrumb{display:none;}
+.breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:0; padding:13px 20px; font-size:14.5px; color:#5a6272; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; border-bottom:1px solid var(--line); flex-shrink:0;}
+.breadcrumb a{color:#8b96a8; text-decoration:none;}
+.breadcrumb a:hover{color:#5ec8f8;}
+.breadcrumb .crumb-sep{margin:0 8px; color:#5a6272;}
+.breadcrumb .crumb-current{color:#e8ecf3;}
+</style>
+<script>if (window.self !== window.top) { document.documentElement.classList.add('embedded'); }</script>
+<header>
+<nav>
+  <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="8" fill="#E8B75B"/>
+<ellipse cx="50" cy="50" rx="45" ry="18" fill="none" stroke="#7C8CFF" stroke-width="4"/>
+</svg> Graviton Academy</a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html#subjects" class="">Subjects</a>
+<a href="3d-lab.html" class="">3D Lab</a>
+<a href="pricing.html" class="">Pricing</a>
+<a href="about.html" class="">About</a>
+<a href="blog.html" class="">Blog</a>
+<a href="faq.html" class="">FAQ</a>
+<a href="contact.html" class="">Contact</a>
+
+    <a class="nav-cta" href="contact.html">Book a demo</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+</nav>
+</header>
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a> <span class="crumb-sep">/</span> <a href="3d-lab.html">3D Lab</a> <span class="crumb-sep">/</span> <span class="crumb-current">Molecule Lab</span></nav>
+<div id="app">
+  <div id="canvasWrap"><div id="loading">Loading engine…</div></div>
+  <div id="panel">
+    <h1>Molecule Model Generator</h1>
+    <div class="sub">Ball-and-stick, generated procedurally — no 3D asset files</div>
+
+    <div class="tabs">
+      <div class="tabBtn active" id="tabPreset">Featured</div>
+      <div class="tabBtn" id="tabLibrary">CBSE Library</div>
+      <div class="tabBtn" id="tabSmiles">SMILES</div>
+    </div>
+
+    <div id="presetPanel">
+      <label for="molSelect">Molecule (exact hand-set geometry)</label>
+      <select id="molSelect"></select>
+    </div>
+
+    <div id="libraryPanel" class="hidden">
+      <label for="librarySearch">Search compound (Class 10–12 CBSE)</label>
+      <input type="text" id="librarySearch" placeholder="Type to filter…">
+      <select id="librarySelect" size="8" style="margin-top:8px;"></select>
+      <div id="libraryError" style="font-size:11px;color:#f45b69;margin-top:6px;min-height:14px;"></div>
+    </div>
+
+    <div id="smilesPanel" class="hidden">
+      <label for="smilesInput">SMILES string</label>
+      <div class="smilesRow">
+        <input type="text" id="smilesInput" placeholder="e.g. CCO">
+        <button id="smilesGo">Build</button>
+      </div>
+      <div id="smilesError"></div>
+      <div class="examples">
+        Try: <b data-s="CCO">ethanol</b> · <b data-s="c1ccccc1">benzene</b> ·
+        <b data-s="CC(=O)O">acetic acid</b> · <b data-s="C1=CC=CC=C1O">phenol</b> ·
+        <b data-s="CC(=O)Oc1ccccc1C(=O)O">aspirin</b>
+      </div>
+    </div>
+
+    <div id="formulaBadge">H₂O</div>
+    <div id="nameBadge">Water</div>
+
+    <div class="grid">
+      <div class="stat"><div class="k">Atoms</div><div class="v" id="statAtoms">3</div></div>
+      <div class="stat"><div class="k">Bonds</div><div class="v" id="statBonds">2</div></div>
+    </div>
+
+    <label>Element legend</label>
+    <div id="legend"></div>
+
+    <div class="toggleRow">
+      <input type="checkbox" id="autoRotate" checked>
+      <label style="margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text);" for="autoRotate">Auto-rotate</label>
+    </div>
+    <div class="toggleRow">
+      <input type="checkbox" id="showLabels" checked>
+      <label style="margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text);" for="showLabels">Show atom labels</label>
+    </div>
+
+    <div class="hint" id="hintText">
+      Drag to rotate · scroll to zoom · geometry comes from a small
+      per-molecule coordinate table — swap in any {atoms, bonds} JSON to
+      add new molecules with no new rendering code.
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@rdkit/rdkit@2024.3.5-1.0.0/dist/RDKit_minimal.js"></script>
+<script>
+/* ---------------------------------------------------------
+   1. ELEMENT STYLE TABLE (CPK-like convention)
+----------------------------------------------------------*/
+const ELEMENT_STYLE = {
+  H:  {color:0xdce6f5, radius:0.38},
+  C:  {color:0x707070, radius:0.52},
+  N:  {color:0x5ec8f8, radius:0.50},
+  O:  {color:0xf45b69, radius:0.50},
+  P:  {color:0xf6a55c, radius:0.55},
+  S:  {color:0xf7e15a, radius:0.55},
+  Cl: {color:0x6fd66f, radius:0.58},
+  F:  {color:0x9be89b, radius:0.42},
+  Na: {color:0xb98aff, radius:0.62},
+  Ca: {color:0x7fdca4, radius:0.62},
+  Fe: {color:0xd68a3c, radius:0.58},
+  Br: {color:0xa5522d, radius:0.60},
+  DEFAULT: {color:0xbbbbbb, radius:0.5}
+};
+
+/* ---------------------------------------------------------
+   2. PRESET MOLECULE DATA (curated, idealized VSEPR coordinates)
+----------------------------------------------------------*/
+const MOLECULES = [
+{ name:"Water", formula:"H₂O",
+  atoms:[{el:"O",x:0,y:0,z:0},{el:"H",x:0.76,y:0.59,z:0},{el:"H",x:-0.76,y:0.59,z:0}],
+  bonds:[[0,1,1],[0,2,1]] },
+{ name:"Carbon Dioxide", formula:"CO₂",
+  atoms:[{el:"C",x:0,y:0,z:0},{el:"O",x:1.2,y:0,z:0},{el:"O",x:-1.2,y:0,z:0}],
+  bonds:[[0,1,2],[0,2,2]] },
+{ name:"Methane", formula:"CH₄",
+  atoms:[{el:"C",x:0,y:0,z:0},{el:"H",x:0.63,y:0.63,z:0.63},{el:"H",x:-0.63,y:-0.63,z:0.63},
+    {el:"H",x:-0.63,y:0.63,z:-0.63},{el:"H",x:0.63,y:-0.63,z:-0.63}],
+  bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]] },
+{ name:"Ammonia", formula:"NH₃",
+  atoms:[{el:"N",x:0,y:0.3,z:0},{el:"H",x:0.94,y:-0.2,z:0},{el:"H",x:-0.47,y:-0.2,z:0.82},
+    {el:"H",x:-0.47,y:-0.2,z:-0.82}],
+  bonds:[[0,1,1],[0,2,1],[0,3,1]] },
+{ name:"Ethanol", formula:"C₂H₅OH",
+  atoms:[{el:"C",x:-0.75,y:0,z:0},{el:"C",x:0.75,y:0,z:0},{el:"O",x:1.4,y:1.2,z:0},
+    {el:"H",x:-1.15,y:0.5,z:0.87},{el:"H",x:-1.15,y:0.5,z:-0.87},{el:"H",x:-1.15,y:-1.0,z:0},
+    {el:"H",x:1.15,y:-0.5,z:0.87},{el:"H",x:1.15,y:-0.5,z:-0.87},{el:"H",x:2.35,y:1.1,z:0}],
+  bonds:[[0,1,1],[1,2,1],[0,3,1],[0,4,1],[0,5,1],[1,6,1],[1,7,1],[2,8,1]] },
+{ name:"Hydrogen Chloride", formula:"HCl",
+  atoms:[{el:"H",x:-0.64,y:0,z:0},{el:"Cl",x:0.64,y:0,z:0}],
+  bonds:[[0,1,1]] },
+{ name:"Oxygen Gas", formula:"O₂",
+  atoms:[{el:"O",x:-0.6,y:0,z:0},{el:"O",x:0.6,y:0,z:0}],
+  bonds:[[0,1,2]] },
+{ name:"Nitrogen Gas", formula:"N₂",
+  atoms:[{el:"N",x:-0.55,y:0,z:0},{el:"N",x:0.55,y:0,z:0}],
+  bonds:[[0,1,3]] },
+{ name:"Ethylene", formula:"C₂H₄",
+  atoms:[{el:"C",x:-0.67,y:0,z:0},{el:"C",x:0.67,y:0,z:0},{el:"H",x:-1.23,y:0.93,z:0},
+    {el:"H",x:-1.23,y:-0.93,z:0},{el:"H",x:1.23,y:0.93,z:0},{el:"H",x:1.23,y:-0.93,z:0}],
+  bonds:[[0,1,2],[0,2,1],[0,3,1],[1,4,1],[1,5,1]] },
+{ name:"Sodium Chloride", formula:"NaCl",
+  atoms:[{el:"Na",x:-0.7,y:0,z:0},{el:"Cl",x:0.7,y:0,z:0}],
+  bonds:[[0,1,1]] },
+{ name:"Glucose (ring, simplified)", formula:"C₆H₁₂O₆",
+  atoms:[{el:"C",x:1.2,y:0.7,z:0},{el:"C",x:1.2,y:-0.7,z:0},{el:"C",x:0,y:-1.4,z:0},
+    {el:"O",x:-1.2,y:-0.7,z:0},{el:"C",x:-1.2,y:0.7,z:0},{el:"C",x:0,y:1.4,z:0},
+    {el:"O",x:2.4,y:1.3,z:0},{el:"O",x:2.4,y:-1.3,z:0},{el:"O",x:0,y:-2.8,z:0},
+    {el:"O",x:-2.4,y:1.3,z:0},{el:"C",x:0,y:2.8,z:0.6}],
+  bonds:[[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,0,1],
+    [0,6,1],[1,7,1],[2,8,1],[4,9,1],[5,10,1]] },
+{ name:"Sulfuric Acid", formula:"H₂SO₄",
+  atoms:[{el:"S",x:0,y:0,z:0},{el:"O",x:0.9,y:0.9,z:0},{el:"O",x:-0.9,y:0.9,z:0},
+    {el:"O",x:0.9,y:-0.9,z:0},{el:"O",x:-0.9,y:-0.9,z:0},{el:"H",x:1.6,y:1.5,z:0},
+    {el:"H",x:-1.6,y:-1.5,z:0}],
+  bonds:[[0,1,2],[0,2,2],[0,3,1],[0,4,1],[3,5,1],[4,6,1]] }
+];
+
+/* ---------------------------------------------------------
+   2b. COMPOUND LIBRARY — CBSE Class 10/11/12 chemistry syllabus
+   Curated name -> SMILES map. Rendered through the SMILES/RDKit
+   pipeline (section 5), so geometry is generated, not hand-placed.
+   Note: large biopolymers (starch, cellulose, proteins, DNA,
+   nylon, rubber, PVC, teflon) are represented by their repeat
+   monomer unit, since the full polymer isn't a single small
+   molecule. Complex coordination/cluster compounds (diborane,
+   borax, ferrocene-type complexes) are omitted — their bonding
+   isn't expressible in simple valence SMILES.
+----------------------------------------------------------*/
+const COMPOUND_LIBRARY = [
+  // --- Class 10: acids, bases, salts, metals/non-metals, carbon compounds ---
+  {name:"Acetic acid (Ethanoic acid)", smiles:"CC(=O)O", formula:"CH₃COOH"},
+  {name:"Aluminium oxide", smiles:"[Al+3].[Al+3].[O-2].[O-2].[O-2]", formula:"Al₂O₃"},
+  {name:"Ammonium chloride", smiles:"[NH4+].[Cl-]", formula:"NH₄Cl"},
+  {name:"Barium chloride", smiles:"[Ba+2].[Cl-].[Cl-]", formula:"BaCl₂"},
+  {name:"Bleaching powder", smiles:"[Ca+2].[Cl-].[O-]Cl", formula:"CaOCl₂"},
+  {name:"Calcium carbonate", smiles:"[Ca+2].[O-]C(=O)[O-]", formula:"CaCO₃"},
+  {name:"Calcium hydroxide", smiles:"[Ca+2].[OH-].[OH-]", formula:"Ca(OH)₂"},
+  {name:"Calcium oxide (Quicklime)", smiles:"O=[Ca]", formula:"CaO"},
+  {name:"Calcium sulfate (Plaster of Paris)", smiles:"[Ca+2].[O-]S(=O)(=O)[O-]", formula:"CaSO₄"},
+  {name:"Carbon dioxide", smiles:"O=C=O", formula:"CO₂"},
+  {name:"Copper oxide", smiles:"O=[Cu]", formula:"CuO"},
+  {name:"Copper sulfate", smiles:"[Cu+2].[O-]S(=O)(=O)[O-]", formula:"CuSO₄"},
+  {name:"Ethanol", smiles:"CCO", formula:"C₂H₅OH"},
+  {name:"Ethene (Ethylene)", smiles:"C=C", formula:"C₂H₄"},
+  {name:"Ethyne (Acetylene)", smiles:"C#C", formula:"C₂H₂"},
+  {name:"Glucose", smiles:"OCC1OC(O)C(O)C(O)C1O", formula:"C₆H₁₂O₆"},
+  {name:"Hydrochloric acid", smiles:"Cl", formula:"HCl"},
+  {name:"Hydrogen peroxide", smiles:"OO", formula:"H₂O₂"},
+  {name:"Iron(III) chloride", smiles:"[Fe+3].[Cl-].[Cl-].[Cl-]", formula:"FeCl₃"},
+  {name:"Iron(III) oxide (Rust)", smiles:"[Fe+3].[Fe+3].[O-2].[O-2].[O-2]", formula:"Fe₂O₃"},
+  {name:"Iron(II) sulfate (Ferrous sulfate)", smiles:"[Fe+2].[O-]S(=O)(=O)[O-]", formula:"FeSO₄"},
+  {name:"Lead iodide", smiles:"[Pb+2].[I-].[I-]", formula:"PbI₂"},
+  {name:"Lead nitrate", smiles:"[Pb+2].[O-][N+](=O)=O.[O-][N+](=O)=O", formula:"Pb(NO₃)₂"},
+  {name:"Magnesium oxide", smiles:"O=[Mg]", formula:"MgO"},
+  {name:"Manganese dioxide", smiles:"O=[Mn]=O", formula:"MnO₂"},
+  {name:"Methane", smiles:"C", formula:"CH₄"},
+  {name:"Methanol", smiles:"CO", formula:"CH₃OH"},
+  {name:"Nitric acid", smiles:"O=[N+]([O-])O", formula:"HNO₃"},
+  {name:"Potassium hydroxide", smiles:"[K+].[OH-]", formula:"KOH"},
+  {name:"Potassium iodide", smiles:"[K+].[I-]", formula:"KI"},
+  {name:"Silver chloride", smiles:"[Ag+].[Cl-]", formula:"AgCl"},
+  {name:"Silver nitrate", smiles:"[Ag+].[O-][N+](=O)=O", formula:"AgNO₃"},
+  {name:"Sodium bicarbonate (Baking soda)", smiles:"[Na+].OC(=O)[O-]", formula:"NaHCO₃"},
+  {name:"Sodium carbonate (Washing soda)", smiles:"[Na+].[Na+].[O-]C(=O)[O-]", formula:"Na₂CO₃"},
+  {name:"Sodium hydroxide", smiles:"[Na+].[OH-]", formula:"NaOH"},
+  {name:"Sulfuric acid", smiles:"OS(=O)(=O)O", formula:"H₂SO₄"},
+  {name:"Zinc chloride", smiles:"[Zn+2].[Cl-].[Cl-]", formula:"ZnCl₂"},
+  {name:"Zinc oxide", smiles:"O=[Zn]", formula:"ZnO"},
+  {name:"Zinc sulfate", smiles:"[Zn+2].[O-]S(=O)(=O)[O-]", formula:"ZnSO₄"},
+
+  // --- Class 11: hydrogen, s/p-block, hydrocarbons, environmental chem ---
+  {name:"Aluminium chloride", smiles:"Cl[Al](Cl)Cl", formula:"AlCl₃"},
+  {name:"Benzene", smiles:"c1ccccc1", formula:"C₆H₆"},
+  {name:"Boric acid", smiles:"OB(O)O", formula:"H₃BO₃"},
+  {name:"Boron trichloride", smiles:"ClB(Cl)Cl", formula:"BCl₃"},
+  {name:"Boron trifluoride", smiles:"FB(F)F", formula:"BF₃"},
+  {name:"Calcium hydride", smiles:"[Ca+2].[H-].[H-]", formula:"CaH₂"},
+  {name:"Carbon monoxide", smiles:"[C-]#[O+]", formula:"CO"},
+  {name:"Carbon tetrachloride", smiles:"ClC(Cl)(Cl)Cl", formula:"CCl₄"},
+  {name:"Chlorine gas", smiles:"ClCl", formula:"Cl₂"},
+  {name:"Chloroform", smiles:"ClC(Cl)Cl", formula:"CHCl₃"},
+  {name:"Chloromethane", smiles:"CCl", formula:"CH₃Cl"},
+  {name:"Cyclohexane", smiles:"C1CCCCC1", formula:"C₆H₁₂"},
+  {name:"DDT (dichlorodiphenyltrichloroethane)", smiles:"ClC(Cl)(Cl)C(c1ccc(Cl)cc1)c1ccc(Cl)cc1", formula:"C₁₄H₉Cl₅"},
+  {name:"Dichloromethane", smiles:"ClCCl", formula:"CH₂Cl₂"},
+  {name:"Ethane", smiles:"CC", formula:"C₂H₆"},
+  {name:"Freon-11 (CFCl3)", smiles:"FC(Cl)(Cl)Cl", formula:"CCl₃F"},
+  {name:"Heavy water", smiles:"[2H]O[2H]", formula:"D₂O"},
+  {name:"Hydrogen gas", smiles:"[H][H]", formula:"H₂"},
+  {name:"Nitrogen gas", smiles:"N#N", formula:"N₂"},
+  {name:"Oxygen gas", smiles:"O=O", formula:"O₂"},
+  {name:"Propane", smiles:"CCC", formula:"C₃H₈"},
+  {name:"Silicon dioxide", smiles:"O=[Si]=O", formula:"SiO₂"},
+  {name:"Silicon tetrachloride", smiles:"Cl[Si](Cl)(Cl)Cl", formula:"SiCl₄"},
+  {name:"Sodium hydride", smiles:"[Na+].[H-]", formula:"NaH"},
+
+  // --- Class 12: haloalkanes, alcohols/phenols/ethers, carbonyls, ---
+  // --- carboxylic acids, amines, biomolecules, everyday chemistry ---
+  {name:"Acetaldehyde (Ethanal)", smiles:"CC=O", formula:"CH₃CHO"},
+  {name:"Acetone (Propanone)", smiles:"CC(=O)C", formula:"CH₃COCH₃"},
+  {name:"Adipic acid (nylon-6,6 monomer)", smiles:"OC(=O)CCCCC(=O)O", formula:"HOOC(CH₂)₄COOH"},
+  {name:"Alanine (amino acid)", smiles:"CC(N)C(=O)O", formula:"CH₃CH(NH₂)COOH"},
+  {name:"Aniline", smiles:"Nc1ccccc1", formula:"C₆H₅NH₂"},
+  {name:"Aspirin", smiles:"CC(=O)Oc1ccccc1C(=O)O", formula:"CH₃COOC₆H₄COOH"},
+  {name:"Benzoic acid", smiles:"OC(=O)c1ccccc1", formula:"C₆H₅COOH"},
+  {name:"Chlorobenzene", smiles:"Clc1ccccc1", formula:"C₆H₅Cl"},
+  {name:"Diethyl ether", smiles:"CCOCC", formula:"C₂H₅OC₂H₅"},
+  {name:"Formaldehyde (Methanal)", smiles:"C=O", formula:"HCHO"},
+  {name:"Fructose", smiles:"OCC(=O)C(O)C(O)C(O)CO", formula:"C₆H₁₂O₆"},
+  {name:"Glycine (amino acid)", smiles:"NCC(=O)O", formula:"NH₂CH₂COOH"},
+  {name:"Hexamethylenediamine (nylon-6,6 monomer)", smiles:"NCCCCCCN", formula:"NH₂(CH₂)₆NH₂"},
+  {name:"Isoprene (natural rubber monomer)", smiles:"C=C(C)C=C", formula:"C₅H₈"},
+  {name:"Mercury(II) chloride", smiles:"Cl[Hg]Cl", formula:"HgCl₂"},
+  {name:"Methylamine", smiles:"CN", formula:"CH₃NH₂"},
+  {name:"Nickel sulfate", smiles:"[Ni+2].[O-]S(=O)(=O)[O-]", formula:"NiSO₄"},
+  {name:"Paracetamol", smiles:"CC(=O)Nc1ccc(O)cc1", formula:"CH₃CONHC₆H₄OH"},
+  {name:"Phenol", smiles:"Oc1ccccc1", formula:"C₆H₅OH"},
+  {name:"Potassium dichromate", smiles:"[K+].[K+].[O-][Cr](=O)(=O)O[Cr](=O)(=O)[O-]", formula:"K₂Cr₂O₇"},
+  {name:"Potassium permanganate", smiles:"[K+].[O-][Mn](=O)(=O)=O", formula:"KMnO₄"},
+  {name:"Saccharin", smiles:"O=C1c2ccccc2S(=O)(=O)N1", formula:"C₇H₅NO₃S"},
+  {name:"Silver bromide", smiles:"[Ag+].[Br-]", formula:"AgBr"},
+  {name:"Sucrose", smiles:"OCC1OC(CO)(OC2OC(CO)C(O)C(O)C2O)C(O)C1O", formula:"C₁₂H₂₂O₁₁"},
+  {name:"Tetrafluoroethylene (Teflon monomer)", smiles:"FC(F)=C(F)F", formula:"CF₂=CF₂"},
+  {name:"Tin(II) chloride", smiles:"Cl[Sn]Cl", formula:"SnCl₂"},
+  {name:"Vinyl chloride (PVC monomer)", smiles:"C=CCl", formula:"CH₂=CHCl"},
+];
+
+/* ---------------------------------------------------------
+   3. THREE.JS SETUP
+----------------------------------------------------------*/
+const wrap = document.getElementById('canvasWrap');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x171e29);
+
+const camera = new THREE.PerspectiveCamera(50, wrap.clientWidth/wrap.clientHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+wrap.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+const key = new THREE.PointLight(0xffffff, 1.5, 100);
+key.position.set(8,8,8);
+scene.add(key);
+const rim = new THREE.PointLight(0x5ec8f8, 0.6, 100);
+rim.position.set(-8,-4,-8);
+scene.add(rim);
+const fill = new THREE.PointLight(0xffffff, 0.4, 100);
+fill.position.set(-6,6,-4);
+scene.add(fill);
+
+let camTheta=0.6, camPhi=1.1, camRadius=8, isDragging=false, prevX=0, prevY=0;
+function updateCamera(){
+  camera.position.x = camRadius*Math.sin(camPhi)*Math.sin(camTheta);
+  camera.position.y = camRadius*Math.cos(camPhi);
+  camera.position.z = camRadius*Math.sin(camPhi)*Math.cos(camTheta);
+  camera.lookAt(0,0,0);
+}
+updateCamera();
+
+renderer.domElement.addEventListener('pointerdown', e=>{isDragging=true;prevX=e.clientX;prevY=e.clientY;});
+window.addEventListener('pointerup', ()=>isDragging=false);
+window.addEventListener('pointermove', e=>{
+  if(!isDragging) return;
+  const dx=e.clientX-prevX, dy=e.clientY-prevY;
+  camTheta -= dx*0.008;
+  camPhi = Math.min(Math.max(camPhi - dy*0.008, 0.2), Math.PI-0.2);
+  prevX=e.clientX; prevY=e.clientY;
+  updateCamera();
+});
+renderer.domElement.addEventListener('wheel', e=>{
+  e.preventDefault();
+  camRadius = Math.min(Math.max(camRadius + e.deltaY*0.01, 2), 40);
+  updateCamera();
+}, {passive:false});
+window.addEventListener('resize', ()=>{
+  camera.aspect = wrap.clientWidth/wrap.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+});
+
+/* ---------------------------------------------------------
+   4. PROCEDURAL MOLECULE BUILDER
+----------------------------------------------------------*/
+let molGroup = new THREE.Group();
+scene.add(molGroup);
+
+function clearMol(){
+  scene.remove(molGroup);
+  molGroup.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); });
+  molGroup = new THREE.Group();
+  scene.add(molGroup);
+}
+
+function styleFor(el){ return ELEMENT_STYLE[el] || ELEMENT_STYLE.DEFAULT; }
+
+function makeBondCylinder(p1, p2, radius, color, offset){
+  const dir = new THREE.Vector3().subVectors(p2,p1);
+  const len = dir.length();
+  if(len < 0.001) return null;
+  const geo = new THREE.CylinderGeometry(radius, radius, len, 10);
+  const mat = new THREE.MeshStandardMaterial({color, roughness:0.5, metalness:0.05});
+  const mesh = new THREE.Mesh(geo, mat);
+  const mid = new THREE.Vector3().addVectors(p1,p2).multiplyScalar(0.5);
+  mesh.position.copy(mid);
+  const axis = new THREE.Vector3(0,1,0);
+  const quat = new THREE.Quaternion().setFromUnitVectors(axis, dir.clone().normalize());
+  mesh.quaternion.copy(quat);
+  if(offset){
+    const perp = new THREE.Vector3(1,0,0).cross(dir.clone().normalize());
+    if(perp.length() < 0.01) perp.set(0,0,1);
+    perp.normalize().multiplyScalar(offset);
+    mesh.position.add(perp);
+  }
+  return mesh;
+}
+
+// Dashed connector for ionic bonds (electrostatic attraction between ions,
+// not a covalent bond) so separate-ion compounds like NaCl still read as
+// one connected structure instead of floating fragments.
+function makeIonicBond(p1, p2, color){
+  const group = new THREE.Group();
+  const dir = new THREE.Vector3().subVectors(p2,p1);
+  const len = dir.length();
+  if(len < 0.001) return group;
+  const dashLen = 0.16, gapLen = 0.12;
+  const unit = dir.clone().normalize();
+  let travelled = 0;
+  const mat = new THREE.MeshStandardMaterial({color, roughness:0.5, metalness:0.05, transparent:true, opacity:0.75});
+  while(travelled < len){
+    const segLen = Math.min(dashLen, len - travelled);
+    const geo = new THREE.CylinderGeometry(0.05, 0.05, segLen, 8);
+    const mesh = new THREE.Mesh(geo, mat);
+    const segMid = new THREE.Vector3().copy(p1).add(unit.clone().multiplyScalar(travelled + segLen/2));
+    mesh.position.copy(segMid);
+    const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), unit);
+    mesh.quaternion.copy(quat);
+    group.add(mesh);
+    travelled += dashLen + gapLen;
+  }
+  return group;
+}
+
+// White label text with a dark outline so it reads on any sphere color / background
+function makeLabelSprite(text){
+  const canvas = document.createElement('canvas');
+  canvas.width = 128; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.font = 'bold 40px system-ui';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = 'rgba(11,14,20,0.85)';
+  ctx.strokeText(text, 64, 32);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(text, 64, 32);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({map:tex, transparent:true});
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(0.6,0.3,1);
+  return sprite;
+}
+
+let labelSprites = [];
+let showLabels = true;
+
+function buildMolecule(mol){
+  clearMol();
+  labelSprites = [];
+
+  const positions = mol.atoms.map(a=>new THREE.Vector3(a.x,a.y,a.z));
+
+  mol.bonds.forEach(([i,j,order])=>{
+    const p1 = positions[i], p2 = positions[j];
+    const bondColor = 0xcfd8e3;
+    const bondRadius = 0.09;
+    if(order === 'ionic'){
+      molGroup.add(makeIonicBond(p1,p2,0xf6a55c));
+    } else if(order === 1){
+      const c = makeBondCylinder(p1,p2,bondRadius,bondColor,0);
+      if(c) molGroup.add(c);
+    } else if(order === 2){
+      const c1 = makeBondCylinder(p1,p2,bondRadius*0.8,bondColor, 0.12);
+      const c2 = makeBondCylinder(p1,p2,bondRadius*0.8,bondColor,-0.12);
+      if(c1) molGroup.add(c1); if(c2) molGroup.add(c2);
+    } else if(order >= 3){
+      const c1 = makeBondCylinder(p1,p2,bondRadius*0.7,bondColor, 0);
+      const c2 = makeBondCylinder(p1,p2,bondRadius*0.7,bondColor, 0.18);
+      const c3 = makeBondCylinder(p1,p2,bondRadius*0.7,bondColor,-0.18);
+      if(c1) molGroup.add(c1); if(c2) molGroup.add(c2); if(c3) molGroup.add(c3);
+    }
+  });
+
+  mol.atoms.forEach((a,idx)=>{
+    const s = styleFor(a.el);
+    const geo = new THREE.SphereGeometry(s.radius, 24, 24);
+    const mat = new THREE.MeshStandardMaterial({color:s.color, roughness:0.35, metalness:0.1});
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.copy(positions[idx]);
+    molGroup.add(mesh);
+
+    // subtle dark rim so light-colored atoms (like hydrogen) stay readable
+    // against the lighter scene background, regardless of lighting angle
+    const outlineMat = new THREE.MeshBasicMaterial({color:0x05070a, side:THREE.BackSide, transparent:true, opacity:0.45});
+    const outline = new THREE.Mesh(geo, outlineMat);
+    outline.scale.setScalar(1.12);
+    mesh.add(outline);
+
+    const label = makeLabelSprite(a.el);
+    label.position.copy(positions[idx]).add(new THREE.Vector3(0, s.radius+0.35, 0));
+    label.visible = showLabels;
+    molGroup.add(label);
+    labelSprites.push(label);
+  });
+
+  const box = new THREE.Box3().setFromObject(molGroup);
+  const center = box.getCenter(new THREE.Vector3());
+  molGroup.position.sub(center);
+  const size = box.getSize(new THREE.Vector3()).length();
+  camRadius = Math.max(size * 1.4, 3);
+  updateCamera();
+
+  document.getElementById('formulaBadge').textContent = mol.formula;
+  document.getElementById('nameBadge').textContent = mol.name;
+  document.getElementById('statAtoms').textContent = mol.atoms.length;
+  document.getElementById('statBonds').textContent = mol.bonds.length;
+
+  const uniqueEls = [...new Set(mol.atoms.map(a=>a.el))];
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  uniqueEls.forEach(el=>{
+    const s = styleFor(el);
+    const row = document.createElement('div');
+    row.className = 'legendRow';
+    row.innerHTML = `<span class="dot" style="background:#${s.color.toString(16).padStart(6,'0')}"></span>${el}`;
+    legend.appendChild(row);
+  });
+  if(mol.hasIonicBonds){
+    const row = document.createElement('div');
+    row.className = 'legendRow';
+    row.innerHTML = `<span style="display:inline-block;width:16px;border-top:2px dashed #f6a55c;"></span>Ionic bond (electrostatic, not covalent)`;
+    legend.appendChild(row);
+  }
+}
+
+/* ---------------------------------------------------------
+   5. RDKit.js — SMILES → {atoms, bonds} via molfile parsing
+   RDKit's JS/WASM build reliably gives 2D depiction coordinates
+   (not a full MMFF 3D conformer). We use those as x,y and add a
+   small deterministic z-offset per atom so the structure still
+   reads as a rotatable 3D object. Good for skeleton/connectivity
+   teaching; for precise 3D bond angles, use the preset list
+   (hand-set from real VSEPR geometry) or a server-side RDKit.
+----------------------------------------------------------*/
+let RDKitReady = null;
+function waitForRDKitScript(timeoutMs){
+  return new Promise((resolve, reject)=>{
+    const start = Date.now();
+    (function check(){
+      if(typeof window.initRDKitModule === 'function'){
+        resolve();
+      } else if(Date.now() - start > timeoutMs){
+        reject(new Error('RDKit.js failed to load from the CDN (check your network/ad-blocker).'));
+      } else {
+        setTimeout(check, 100);
+      }
+    })();
+  });
+}
+function loadRDKit(){
+  if(RDKitReady) return RDKitReady;
+  RDKitReady = waitForRDKitScript(10000).then(()=> window.initRDKitModule({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@rdkit/rdkit@2024.3.5-1.0.0/dist/${file}`
+  }));
+  return RDKitReady;
+}
+
+function parseMolblock(molblock){
+  const lines = molblock.split('\n');
+  const counts = lines[3];
+  const numAtoms = parseInt(counts.substring(0,3));
+  const numBonds = parseInt(counts.substring(3,6));
+  const atoms = [];
+  for(let i=0;i<numAtoms;i++){
+    const line = lines[4+i];
+    const x = parseFloat(line.substring(0,10));
+    const y = parseFloat(line.substring(10,20));
+    const z = parseFloat(line.substring(20,30));
+    const el = line.substring(31,34).trim();
+    // deterministic small z-jitter so a flat 2D depiction still reads as 3D
+    const zJitter = ((i*37)%7 - 3) * 0.12;
+    atoms.push({el, x, y, z: z + zJitter, charge:0});
+  }
+  const bonds = [];
+  for(let i=0;i<numBonds;i++){
+    const line = lines[4+numAtoms+i];
+    const a1 = parseInt(line.substring(0,3)) - 1;
+    const a2 = parseInt(line.substring(3,6)) - 1;
+    const order = parseInt(line.substring(6,9));
+    bonds.push([a1, a2, order]);
+  }
+  // formal charges live in "M  CHG" property lines, not the atom block —
+  // needed so ionic bonding can tell which specific atom in a polyatomic
+  // ion (e.g. which oxygen in sulfate) actually carries the charge.
+  for(let i=4+numAtoms+numBonds; i<lines.length; i++){
+    const line = lines[i];
+    if(!line || line.startsWith('M  END')) break;
+    if(line.startsWith('M  CHG')){
+      const parts = line.trim().split(/\s+/);
+      const n = parseInt(parts[2]);
+      for(let k=0;k<n;k++){
+        const idx = parseInt(parts[3+k*2]) - 1;
+        const chg = parseInt(parts[4+k*2]);
+        if(atoms[idx]) atoms[idx].charge = chg;
+      }
+    }
+  }
+  return {atoms, bonds};
+}
+
+function formulaFromAtoms(atoms){
+  const counts = {};
+  atoms.forEach(a=>{ counts[a.el] = (counts[a.el]||0)+1; });
+  const order = ['C','H'].concat(Object.keys(counts).filter(e=>e!=='C'&&e!=='H').sort());
+  const sub = n=>n===1?'':n.toString().split('').map(d=>'₀₁₂₃₄₅₆₇₈₉'[d]).join('');
+  return order.filter(e=>counts[e]).map(e=>e+sub(counts[e])).join('');
+}
+
+// Evenly-spread unit directions around a point (small-k version of a
+// fibonacci sphere) — fallback only, used when a parent atom has no
+// existing bonds to orient against (isolated atom edge case).
+function spreadDirections(k){
+  const dirs = [];
+  const golden = Math.PI*(3-Math.sqrt(5));
+  for(let i=0;i<k;i++){
+    const y = k===1 ? 0.3 : 1 - (i/(k-1))*2;
+    const r = Math.sqrt(Math.max(0,1-y*y));
+    const theta = golden*i + 0.7; // phase offset so single-H cases don't all point the same way
+    dirs.push(new THREE.Vector3(Math.cos(theta)*r, y, Math.sin(theta)*r));
+  }
+  return dirs;
+}
+
+// Geometry-aware hydrogen placement: given the unit-vector directions to a
+// parent atom's EXISTING bonded neighbors, returns `count` new directions
+// pointing away from those neighbors (roughly tetrahedral/trigonal spread).
+// This is what keeps a ring or chain carbon's hydrogen pointing outward
+// into open space, instead of back into the molecule where it can end up
+// hidden behind another atom (the "missing hydrogen" bug on bonded carbons).
+function hydrogenDirections(count, existingDirs){
+  if(!existingDirs || existingDirs.length === 0){
+    return spreadDirections(count); // isolated atom — no bonds to orient against
+  }
+
+  const avg = new THREE.Vector3();
+  existingDirs.forEach(d=>avg.add(d));
+  avg.multiplyScalar(1/existingDirs.length);
+  let away = avg.clone().multiplyScalar(-1);
+
+  if(away.lengthSq() < 1e-6){
+    // existing bonds already cancel out (e.g. a linear/opposed pair) —
+    // pick any direction perpendicular to the first bond instead
+    const ref = Math.abs(existingDirs[0].y) < 0.9 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0);
+    away = ref.clone().sub(existingDirs[0].clone().multiplyScalar(existingDirs[0].dot(ref)));
+  }
+  away.normalize();
+
+  if(count === 1) return [away];
+
+  // local frame around `away` so multiple new H's spread symmetrically
+  // around it, cone-style, rather than around the world Y axis
+  const ref = Math.abs(away.y) < 0.9 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0);
+  const u = new THREE.Vector3().crossVectors(away, ref).normalize();
+  const v = new THREE.Vector3().crossVectors(away, u).normalize();
+
+  const coneAngle = count === 2 ? Math.PI/3.6 : Math.PI/3.15; // ~50–57°, close to tetrahedral
+  const dirs = [];
+  for(let i=0;i<count;i++){
+    const az = (i/count) * Math.PI*2;
+    const dir = away.clone().multiplyScalar(Math.cos(coneAngle))
+      .add(u.clone().multiplyScalar(Math.sin(coneAngle)*Math.cos(az)))
+      .add(v.clone().multiplyScalar(Math.sin(coneAngle)*Math.sin(az)));
+    dirs.push(dir.normalize());
+  }
+  return dirs;
+}
+
+// Get {atoms, bonds} for the heavy-atom skeleton (real RDKit 2D coordinates),
+// plus the count of hydrogens attached to each heavy atom (from a second,
+// separate add_hs() pass — used only to READ counts, never for coordinates,
+// since RDKit's JS build does not reliably place coordinates on added Hs).
+function getSkeletonAndHCounts(RDKit, smiles){
+  const molSkeleton = RDKit.get_mol(smiles);
+  if(!molSkeleton) throw new Error('Could not parse that SMILES string.');
+  const skeletonBlock = molSkeleton.get_molblock();
+  molSkeleton.delete();
+  const skeleton = parseMolblock(skeletonBlock);
+
+  const molH = RDKit.get_mol(smiles);
+  // add_hs() does NOT mutate the mol in place — it returns the molblock
+  // with explicit hydrogens directly. Calling get_molblock() afterwards
+  // (instead of using this return value) was the bug that made every
+  // SMILES/CBSE-library molecule render with zero hydrogens.
+  const hBlock = molH.add_hs();
+  molH.delete();
+  const withH = parseMolblock(hBlock);
+
+  // heavy atoms keep the same order/index when add_hs() appends new atoms —
+  // so any bond where BOTH sides already existed in the original skeleton
+  // (index < N) is a pre-existing bond, not a newly-added hydrogen, even if
+  // one of those original atoms happens to already be an explicit H (e.g.
+  // H2, heavy water, or a hydride ion). Only count a bond as "new hydrogen
+  // attached" when exactly one side is a genuinely new atom (index >= N) —
+  // counting by element instead of by index was what made H2 and H2O2
+  // render with extra hydrogens.
+  const N = skeleton.atoms.length;
+  const hCounts = new Array(N).fill(0);
+  withH.bonds.forEach(([a,b])=>{
+    const aIsNew = a >= N, bIsNew = b >= N;
+    if(aIsNew && !bIsNew) hCounts[b]++;
+    else if(bIsNew && !aIsNew) hCounts[a]++;
+  });
+
+  return {skeleton, hCounts};
+}
+
+// Attach procedural hydrogens to every heavy atom that needs them, and
+// bridge any disconnected ionic fragments (e.g. Na+ / Cl-) with a visible
+// dashed ionic-bond connector so nothing renders as a floating atom.
+function buildFullStructure(skeleton, hCounts){
+  const atoms = skeleton.atoms.map(a=>({el:a.el, x:a.x, y:a.y, z:a.z, charge:a.charge||0}));
+  const bonds = skeleton.bonds.map(b=>[b[0], b[1], b[2]]);
+  const bondLenH = 0.85;
+
+  hCounts.forEach((count, heavyIdx)=>{
+    if(count <= 0) return;
+    const parent = atoms[heavyIdx];
+
+    // directions from this parent atom to each of its EXISTING bonded
+    // neighbors, so new hydrogens are placed pointing away from them
+    const existingDirs = [];
+    bonds.forEach(([i,j])=>{
+      let neighborIdx = null;
+      if(i === heavyIdx) neighborIdx = j;
+      else if(j === heavyIdx) neighborIdx = i;
+      if(neighborIdx === null) return;
+      const n = atoms[neighborIdx];
+      const d = new THREE.Vector3(n.x-parent.x, n.y-parent.y, n.z-parent.z);
+      if(d.lengthSq() > 1e-8) existingDirs.push(d.normalize());
+    });
+
+    const dirs = hydrogenDirections(count, existingDirs);
+    dirs.forEach(dir=>{
+      const hIdx = atoms.length;
+      atoms.push({
+        el:'H',
+        x: parent.x + dir.x*bondLenH,
+        y: parent.y + dir.y*bondLenH,
+        z: parent.z + dir.z*bondLenH
+      });
+      bonds.push([heavyIdx, hIdx, 1]);
+    });
+  });
+
+  // find connected components (covalent graph only)
+  const adj = atoms.map(()=>[]);
+  bonds.forEach(([i,j])=>{ adj[i].push(j); adj[j].push(i); });
+  const seen = new Array(atoms.length).fill(false);
+  const compOf = new Array(atoms.length).fill(-1);
+  const components = [];
+  for(let start=0; start<atoms.length; start++){
+    if(seen[start]) continue;
+    const comp = [];
+    const stack = [start];
+    seen[start] = true;
+    while(stack.length){
+      const cur = stack.pop();
+      comp.push(cur);
+      compOf[cur] = components.length;
+      adj[cur].forEach(n=>{ if(!seen[n]){ seen[n]=true; stack.push(n); } });
+    }
+    components.push(comp);
+  }
+
+  if(components.length > 1){
+    // Charge-aware ionic bonding. Each formally-charged atom is a bonding
+    // "site" with a valence equal to the size of its charge — e.g. Al3+
+    // can form 3 ionic bonds, a terminal sulfate O- can form 1. This is
+    // what makes the bond land on the correct atom in a polyatomic ion
+    // (only the charged oxygens in sulfate, never the neutral double-bonded
+    // ones) and what reproduces real stoichiometry (each Al in Al2O3
+    // connects to 3 different O, each O connects back to 2 different Al),
+    // instead of the old approach of just chaining nearest whole fragments
+    // together regardless of which atom or charge sign was involved.
+    const dist2 = (i,j)=>{
+      const dx=atoms[i].x-atoms[j].x, dy=atoms[i].y-atoms[j].y, dz=atoms[i].z-atoms[j].z;
+      return dx*dx+dy*dy+dz*dz;
+    };
+
+    const cationSites = [], anionSites = [];
+    atoms.forEach((a,i)=>{
+      if(a.charge > 0) cationSites.push({idx:i, remaining:a.charge});
+      else if(a.charge < 0) anionSites.push({idx:i, remaining:-a.charge});
+    });
+
+    const ionicPairs = [];
+    if(cationSites.length && anionSites.length){
+      // build every valid (different-component) cation/anion pair, nearest first
+      const candidates = [];
+      cationSites.forEach(c=>anionSites.forEach(a=>{
+        if(compOf[c.idx] !== compOf[a.idx]) candidates.push({c, a, d:dist2(c.idx,a.idx)});
+      }));
+      candidates.sort((p,q)=>p.d-q.d);
+      candidates.forEach(({c,a})=>{
+        if(c.remaining>0 && a.remaining>0){
+          ionicPairs.push([c.idx, a.idx]);
+          c.remaining--; a.remaining--;
+        }
+      });
+    }
+
+    const bondedComps = new Set();
+    ionicPairs.forEach(([i,j])=>{ bondedComps.add(compOf[i]); bondedComps.add(compOf[j]); });
+
+    // fallback for any component left completely unconnected (e.g. a
+    // neutral fragment with no formal charge at all) — bridge it to its
+    // geometrically nearest neighbouring fragment so nothing floats free
+    for(let c=0; c<components.length; c++){
+      if(bondedComps.has(c)) continue;
+      let best=null, bestDist=Infinity;
+      components[c].forEach(i=>{
+        atoms.forEach((_,j)=>{
+          if(compOf[j]===c) return;
+          const d = dist2(i,j);
+          if(d < bestDist){ bestDist=d; best=[i,j]; }
+        });
+      });
+      if(best){ ionicPairs.push(best); bondedComps.add(c); bondedComps.add(compOf[best[1]]); }
+    }
+
+    ionicPairs.forEach(([i,j])=>bonds.push([i,j,'ionic']));
+  }
+
+  return {atoms, bonds, hasIonicBonds: components.length > 1};
+}
+
+async function buildFromSmiles(smiles, displayName, curatedFormula){
+  const RDKit = await loadRDKit();
+  const {skeleton, hCounts} = getSkeletonAndHCounts(RDKit, smiles);
+  if(skeleton.atoms.length === 0){
+    throw new Error('No atoms found — try a different SMILES.');
+  }
+  const {atoms, bonds, hasIonicBonds} = buildFullStructure(skeleton, hCounts);
+  const built = {
+    name: displayName || 'From SMILES',
+    // Prefer the curated formula (correct conventional order, e.g. CaCO3,
+    // CuSO4) when one is provided — auto-computing from atom counts uses
+    // the Hill system (carbon first, then hydrogen, then alphabetical),
+    // which is standard for organic molecules but produces the wrong
+    // element order for ionic/inorganic compounds like calcium carbonate.
+    formula: curatedFormula || formulaFromAtoms(atoms),
+    atoms, bonds,
+    hasIonicBonds
+  };
+  buildMolecule(built);
+}
+
+/* ---------------------------------------------------------
+   6. UI WIRING
+----------------------------------------------------------*/
+const select = document.getElementById('molSelect');
+MOLECULES.forEach((m,i)=>{
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = `${m.name} (${m.formula})`;
+  select.appendChild(opt);
+});
+select.addEventListener('change', ()=>buildMolecule(MOLECULES[parseInt(select.value)]));
+
+let autoRotate = true;
+document.getElementById('autoRotate').addEventListener('change', e=>{ autoRotate = e.target.checked; });
+document.getElementById('showLabels').addEventListener('change', e=>{
+  showLabels = e.target.checked;
+  labelSprites.forEach(s=>s.visible = showLabels);
+});
+
+// tabs
+const tabPreset = document.getElementById('tabPreset');
+const tabLibrary = document.getElementById('tabLibrary');
+const tabSmiles = document.getElementById('tabSmiles');
+const presetPanel = document.getElementById('presetPanel');
+const libraryPanel = document.getElementById('libraryPanel');
+const smilesPanel = document.getElementById('smilesPanel');
+const hintText = document.getElementById('hintText');
+
+function setActiveTab(tab){
+  [tabPreset, tabLibrary, tabSmiles].forEach(t=>t.classList.remove('active'));
+  [presetPanel, libraryPanel, smilesPanel].forEach(p=>p.classList.add('hidden'));
+  tab.classList.add('active');
+}
+
+tabPreset.addEventListener('click', ()=>{
+  setActiveTab(tabPreset);
+  presetPanel.classList.remove('hidden');
+  hintText.textContent = 'Drag to rotate · scroll to zoom · geometry comes from a small per-molecule coordinate table — swap in any {atoms, bonds} JSON to add new molecules with no new rendering code.';
+  buildMolecule(MOLECULES[parseInt(select.value)]);
+});
+tabLibrary.addEventListener('click', ()=>{
+  setActiveTab(tabLibrary);
+  libraryPanel.classList.remove('hidden');
+  hintText.textContent = "CBSE Class 10-12 chemistry compound list. Structures are generated live via RDKit.js from each compound's SMILES, so layout is close to 2D depiction with a slight 3D offset, not a full energy-minimized conformer.";
+});
+tabSmiles.addEventListener('click', ()=>{
+  setActiveTab(tabSmiles);
+  smilesPanel.classList.remove('hidden');
+  hintText.textContent = 'Coordinates come from RDKit.js parsing your SMILES string. This gives correct composition and bonds; layout is close to 2D depiction with a slight 3D offset, not a full energy-minimized conformer.';
+});
+
+// CBSE compound library: alphabetical, searchable
+const sortedLibrary = [...COMPOUND_LIBRARY].sort((a,b)=>a.name.localeCompare(b.name));
+const librarySelect = document.getElementById('librarySelect');
+const librarySearch = document.getElementById('librarySearch');
+const libraryError = document.getElementById('libraryError');
+
+function renderLibraryOptions(filter){
+  const f = (filter||'').toLowerCase();
+  librarySelect.innerHTML = '';
+  sortedLibrary
+    .filter(c=>c.name.toLowerCase().includes(f))
+    .forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c.smiles;
+      opt.textContent = c.name;
+      opt.dataset.formula = c.formula || '';
+      librarySelect.appendChild(opt);
+    });
+}
+renderLibraryOptions('');
+
+librarySearch.addEventListener('input', ()=>renderLibraryOptions(librarySearch.value));
+librarySelect.addEventListener('change', ()=>{
+  libraryError.textContent = '';
+  const smiles = librarySelect.value;
+  const opt = librarySelect.options[librarySelect.selectedIndex];
+  const name = opt.textContent;
+  const curatedFormula = opt.dataset.formula;
+  buildFromSmiles(smiles, name, curatedFormula).catch(()=>{
+    libraryError.textContent = "Could not build this compound's structure.";
+  });
+});
+
+function runSmilesBuild(smiles){
+  const errEl = document.getElementById('smilesError');
+  errEl.textContent = '';
+  buildFromSmiles(smiles).catch(err=>{ errEl.textContent = 'Error: ' + err.message; });
+}
+document.getElementById('smilesGo').addEventListener('click', ()=>{
+  const val = document.getElementById('smilesInput').value.trim();
+  if(val) runSmilesBuild(val);
+});
+document.getElementById('smilesInput').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') document.getElementById('smilesGo').click();
+});
+document.querySelectorAll('.examples b').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    document.getElementById('smilesInput').value = el.dataset.s;
+    runSmilesBuild(el.dataset.s);
+  });
+});
+
+buildMolecule(MOLECULES[0]);
+document.getElementById('loading').remove();
+
+// warm up RDKit in the background so the first SMILES build isn't slow
+loadRDKit().catch(err=>{
+  document.getElementById('smilesError').textContent = err.message;
+});
+
+/* ---------------------------------------------------------
+   7. ANIMATION LOOP
+----------------------------------------------------------*/
+function animate(){
+  requestAnimationFrame(animate);
+  if(autoRotate && !isDragging){
+    camTheta += 0.0025;
+    updateCamera();
+  }
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+<script>document.getElementById('navToggle').addEventListener('click', ()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+});</script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Graviton Academy</title>
+<meta name="description" content="Simple pricing for students, classrooms and schools. Start free, upgrade when your class is ready for the full 3D lab.">
+<link rel="canonical" href="https://academy.gravitonlaboratories.workers.dev/pricing.html">
+
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pricing — Graviton Academy">
+<meta property="og:description" content="Simple pricing for students, classrooms and schools. Start free, upgrade when your class is ready for the full 3D lab.">
+<meta property="og:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
+<meta property="og:url" content="https://academy.gravitonlaboratories.workers.dev/pricing.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pricing — Graviton Academy">
+<meta name="twitter:description" content="Simple pricing for students, classrooms and schools. Start free, upgrade when your class is ready for the full 3D lab.">
+<meta name="twitter:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0E14;
+  --bg-panel:#10151F;
+  --bg-panel-2:#141B27;
+  --grid-line:rgba(255,255,255,0.05);
+  --ink:#EDEFF4;
+  --ink-dim:#8A93A6;
+  --ink-faint:#5A6272;
+  --physics:#7C8CFF;
+  --chem:#38D6C0;
+  --bio:#FF8A65;
+  --gold:#E8B75B;
+  --radius:14px;
+  --display: 'Space Grotesk', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--body); line-height:1.6; overflow-x:hidden;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+a{color:inherit; text-decoration:none;}
+img,canvas{display:block; max-width:100%;}
+button{font-family:inherit; cursor:pointer;}
+:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+.eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-dim);}
+h1,h2,h3{font-family:var(--display); font-weight:600; letter-spacing:-0.01em;}
+
+/* NAV */
+header{position:sticky; top:0; z-index:50; background:rgba(10,14,20,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--grid-line);}
+nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:19px;}
+.brand-mark{width:26px; height:26px; position:relative;}
+.nav-links{display:flex; gap:26px; font-size:16px; color:var(--ink-dim); align-items:center;}
+.nav-links a:hover{color:var(--ink);}
+.nav-links a.current{color:var(--ink);}
+.nav-cta{background:var(--gold); color:#151109; font-weight:600; font-size:16px; padding:11px 20px; border-radius:100px; border:none;}
+.nav-toggle{display:none; background:none; border:none; color:var(--ink); font-size:26px;}
+@media(max-width:860px){
+  .nav-links{position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:flex-start; background:var(--bg-panel); padding:20px 24px; gap:18px; border-bottom:1px solid var(--grid-line); display:none;}
+  .nav-links.open{display:flex;}
+  .nav-toggle{display:block;}
+}
+
+/* PAGE HERO (inner pages) */
+.page-hero{padding:64px 0 40px;}
+.page-hero h1{font-size:clamp(30px,4.4vw,46px); margin:12px 0 16px; max-width:760px;}
+.page-hero p.lead{color:var(--ink-dim); font-size:17px; max-width:600px;}
+
+section{padding:80px 0;}
+.section-head{max-width:640px; margin-bottom:44px;}
+.section-head h2{font-size:clamp(24px,3.2vw,34px); margin:10px 0 14px;}
+.section-head p{color:var(--ink-dim); font-size:16px;}
+
+.btn-primary{background:var(--gold); color:#151109; font-weight:600; font-size:15px; padding:13px 22px; border-radius:100px; border:none; display:inline-block;}
+.btn-secondary{background:transparent; color:var(--ink); font-weight:500; font-size:15px; padding:13px 22px; border-radius:100px; border:1px solid var(--grid-line); display:inline-block;}
+.btn-secondary:hover{border-color:var(--ink-faint);}
+
+/* CARDS / PANELS */
+.card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:28px;}
+
+/* TRUST STRIP */
+.trust-strip{padding:34px 0; border-top:1px solid var(--grid-line); border-bottom:1px solid var(--grid-line);}
+.trust-strip .wrap{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:24px;}
+.trust-label{font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); white-space:nowrap;}
+.trust-marks{display:flex; flex-wrap:wrap; gap:32px; align-items:center; color:var(--ink-dim); font-family:var(--display); font-weight:600; font-size:16px;}
+.trust-marks span{opacity:.8;}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media(max-width:900px){.testi-grid{grid-template-columns:1fr;}}
+.testi-card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:26px;}
+.testi-quote{font-size:15px; color:var(--ink); margin-bottom:18px;}
+.testi-who{display:flex; align-items:center; gap:12px;}
+.testi-avatar{width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; font-size:14px; color:#0A0E14;}
+.testi-name{font-size:13px; font-weight:600;}
+.testi-role{font-size:12px; color:var(--ink-faint);}
+
+/* PRICING */
+.pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start;}
+@media(max-width:900px){.pricing-grid{grid-template-columns:1fr; max-width:460px; margin:0 auto;}}
+.price-card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:30px; display:flex; flex-direction:column; gap:18px;}
+.price-card.featured{border-color:var(--gold); background:linear-gradient(180deg, rgba(232,183,91,0.06), var(--bg-panel));}
+.price-tag{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); background:rgba(232,183,91,0.12); padding:4px 10px; border-radius:100px; width:fit-content;}
+.price-amount{font-family:var(--display); font-size:38px; font-weight:600;}
+.price-amount span{font-size:14px; color:var(--ink-dim); font-family:var(--body); font-weight:400;}
+.price-list{list-style:none; display:flex; flex-direction:column; gap:10px; font-size:14px; color:var(--ink-dim);}
+.price-list li{padding-left:22px; position:relative;}
+.price-list li::before{content:"✓"; position:absolute; left:0; color:var(--chem); font-weight:600;}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--grid-line);}
+.faq-q{padding:20px 4px; display:flex; align-items:center; justify-content:space-between; gap:16px; cursor:pointer; font-family:var(--display); font-weight:600; font-size:16px;}
+.faq-chevron{color:var(--ink-faint); transition:transform .25s ease; flex-shrink:0;}
+.faq-item.open .faq-chevron{transform:rotate(180deg);}
+.faq-a{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+.faq-a-inner{padding:0 4px 20px; color:var(--ink-dim); font-size:14px; max-width:680px;}
+
+/* FORM */
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr;}}
+.field{display:flex; flex-direction:column; gap:8px;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:13px; color:var(--ink-dim); font-family:var(--mono);}
+.field input, .field select, .field textarea{
+  background:var(--bg-panel-2); border:1px solid var(--grid-line); border-radius:10px; padding:12px 14px;
+  color:var(--ink); font-family:var(--body); font-size:14px;
+}
+.field textarea{resize:vertical; min-height:110px;}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--physics);}
+.form-note{font-size:12px; color:var(--ink-faint); margin-top:6px;}
+
+/* TEAM */
+.team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media(max-width:900px){.team-grid{grid-template-columns:1fr; max-width:420px; margin:0 auto;}}
+.team-card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:24px; text-align:left;}
+.team-avatar{width:56px; height:56px; border-radius:50%; margin-bottom:16px; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; font-size:18px; color:#0A0E14;}
+.team-name{font-family:var(--display); font-weight:600; font-size:16px; margin-bottom:2px;}
+.team-role{font-size:13px; color:var(--gold); font-family:var(--mono); margin-bottom:12px;}
+.team-bio{font-size:13px; color:var(--ink-dim);}
+
+/* VALUES */
+.value-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media(max-width:900px){.value-grid{grid-template-columns:1fr;}}
+.value-card{padding:0;}
+.value-icon{font-size:22px; margin-bottom:14px;}
+.value-card h3{font-size:17px; margin-bottom:8px;}
+.value-card p{font-size:14px; color:var(--ink-dim);}
+
+/* TIMELINE (about) */
+.timeline{display:flex; flex-direction:column; gap:0;}
+.tl-item{display:grid; grid-template-columns:100px 1fr; gap:24px; padding:20px 0; border-top:1px solid var(--grid-line);}
+.tl-item:last-child{border-bottom:1px solid var(--grid-line);}
+.tl-date{font-family:var(--mono); font-size:13px; color:var(--gold);}
+.tl-body h3{font-size:16px; margin-bottom:6px;}
+.tl-body p{font-size:14px; color:var(--ink-dim);}
+
+/* BLOG */
+.blog-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media(max-width:900px){.blog-grid{grid-template-columns:1fr; max-width:460px; margin:0 auto;}}
+.blog-card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column;}
+.blog-card-top{height:120px; position:relative; overflow:hidden;}
+.blog-card-body{padding:20px 22px 24px; display:flex; flex-direction:column; gap:10px; flex:1;}
+.blog-tag{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;}
+.blog-card h3{font-size:16px; line-height:1.35;}
+.blog-meta{font-size:12px; color:var(--ink-faint); font-family:var(--mono); margin-top:auto;}
+.post-body{max-width:680px; font-size:16px; color:var(--ink-dim); display:flex; flex-direction:column; gap:20px;}
+.post-body h2{color:var(--ink); font-size:22px; margin-top:12px;}
+.post-body p{line-height:1.75;}
+.post-body ul{padding-left:20px; display:flex; flex-direction:column; gap:8px;}
+
+/* LEGAL */
+.legal-body{max-width:720px; display:flex; flex-direction:column; gap:22px; color:var(--ink-dim); font-size:15px; line-height:1.75;}
+.legal-body h2{color:var(--ink); font-size:19px; margin-top:8px;}
+.legal-body strong{color:var(--ink);}
+
+/* BREADCRUMB */
+.breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:0; padding:16px 24px; font-size:15px; color:var(--ink-faint);}
+.breadcrumb a{color:var(--ink-dim);}
+.breadcrumb a:hover{color:var(--gold);}
+.breadcrumb .crumb-sep{margin:0 8px; color:var(--ink-faint);}
+.breadcrumb .crumb-current{color:var(--ink);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
+.footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:32px; margin-bottom:40px;}
+@media(max-width:760px){.footer-grid{grid-template-columns:1fr 1fr;}}
+.footer-brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:17px; margin-bottom:12px;}
+.footer-desc{color:var(--ink-dim); font-size:13px; max-width:260px;}
+.footer-col h4{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); margin-bottom:14px;}
+.footer-col a{display:block; color:var(--ink-dim); font-size:14px; margin-bottom:10px;}
+.footer-col a:hover{color:var(--ink);}
+.footer-bottom{display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; padding-top:24px; border-top:1px solid var(--grid-line); color:var(--ink-faint); font-size:13px;}
+</style>
+</head>
+<body>
+<header>
+<nav>
+  <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="8" fill="#E8B75B"/>
+<ellipse cx="50" cy="50" rx="45" ry="18" fill="none" stroke="#7C8CFF" stroke-width="4"/>
+</svg> Graviton Academy</a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html#subjects" class="">Subjects</a>
+<a href="3d-lab.html" class="">3D Lab</a>
+<a href="previous-year-papers.html" class="">Previous Papers</a>
+<a href="pricing.html" class="current">Pricing</a>
+<a href="about.html" class="">About</a>
+<a href="blog.html" class="">Blog</a>
+<a href="faq.html" class="">FAQ</a>
+<a href="contact.html" class="">Contact</a>
+
+    <a class="nav-cta" href="contact.html">Book a demo</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+</nav>
+</header>
+<main>
+  <section class="page-hero wrap">
+    <p class="eyebrow">Pricing</p>
+    <h1>Straightforward pricing, built for classrooms.</h1>
+    <p class="lead">Free for individual students to try. Paid plans are for classrooms and schools that want the full 3D lab, all 25+ units, and rollout support.</p>
+  </section>
+
+  <section class="wrap">
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tag">Student</div>
+        <div class="price-amount">Free</div>
+        <ul class="price-list">
+          <li>3 live 3D models (Atom, Molecule, DNA)</li>
+          <li>Full Grade 10–12 topic list, read-only</li>
+          <li>Works on any device with a browser</li>
+          <li>No credit card required</li>
+        </ul>
+        <a class="btn-secondary" href="contact.html" style="text-align:center;">Start free</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-tag">Classroom</div>
+        <div class="price-amount">₹499<span> / teacher / month</span></div>
+        <ul class="price-list">
+          <li>All 25+ interactive 3D units unlocked</li>
+          <li>Project-to-screen classroom mode</li>
+          <li>Assign units by grade and topic</li>
+          <li>Email support, same-week response</li>
+          <li>Up to 60 students per teacher</li>
+        </ul>
+        <a class="btn-primary" href="contact.html" style="text-align:center;">Book a demo</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tag">School / Institution</div>
+        <div class="price-amount">Custom</div>
+        <ul class="price-list">
+          <li>Everything in Classroom, school-wide</li>
+          <li>Multiple teachers and sections</li>
+          <li>Onboarding session for staff</li>
+          <li>Priority support & rollout guidance</li>
+          <li>Custom billing (termly or annual)</li>
+        </ul>
+        <a class="btn-secondary" href="contact.html" style="text-align:center;">Talk to us</a>
+      </div>
+    </div>
+    <p class="form-note" style="margin-top:24px;">We're an early-stage team — pricing above reflects our current pilot rates and may be adjusted as we grow. Existing pilot schools keep their original terms.</p>
+  </section>
+
+  <section class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Common questions</p>
+      <h2>Pricing FAQ</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q"><span>Is there a free trial for the Classroom plan?</span><span class="faq-chevron">⌄</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Yes — every Classroom plan starts with a two-week trial with full access, set up during your demo call. No card required to trial.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Do you offer discounts for government or low-fee schools?</span><span class="faq-chevron">⌄</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Yes. We offer reduced rates for government schools and low-fee institutions as part of our pilot program — mention this on the contact form and we'll follow up with details.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Can I switch from Classroom to School later?</span><span class="faq-chevron">⌄</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Yes, at any time. We'll prorate the difference and move your existing assignments and progress over automatically.</div></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+<div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand"><svg class="brand-mark" viewBox="0 0 100 100" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="8" fill="#E8B75B"/>
+<ellipse cx="50" cy="50" rx="45" ry="18" fill="none" stroke="#7C8CFF" stroke-width="4"/>
+</svg> Graviton Academy</div>
+      <p class="footer-desc">Interactive 3D physics, chemistry and biology for grades 9 through 12. Built by teachers and engineers who got tired of flat diagrams.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="index.html#subjects">Subjects</a>
+      <a href="class-10-syllabus.html">Class 10 Syllabus</a>
+      <a href="previous-year-papers.html">Previous Year Papers</a>
+      <a href="3d-lab.html">3D Lab</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="faq.html">FAQ</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="about.html">About</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+      <a href="mailto:hello@graviton.dpdns.org">hello@graviton.dpdns.org</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="refund.html">Refund Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Graviton Academy · graviton.dpdns.org</span>
+    <span>Made for grades 10–12, built for the way science actually looks.</span>
+  </div>
+</div>
+</footer>
+<script>document.getElementById('navToggle').addEventListener('click', ()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+});</script>
+<script>document.querySelectorAll('.faq-item').forEach(item=>{
+  const q = item.querySelector('.faq-q');
+  const a = item.querySelector('.faq-a');
+  q.addEventListener('click', ()=>{
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>{
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight = null;
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      a.style.maxHeight = a.scrollHeight + 'px';
+    }
+  });
+});</script>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Procedural Atomic Model Generator</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#11161f; --line:#1e2632; --text:#e8ecf3; --muted:#8b96a8;
+    --accent:#5ec8f8; --accent2:#f6a55c; --nucleus-p:#f45b69; --nucleus-n:#4d5b73;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;overflow:hidden;}
+  #app{display:flex;flex:1;min-height:0;width:100%;}
+  #canvasWrap{flex:1;position:relative;}
+  canvas{display:block;width:100%;height:100%;}
+  #panel{width:300px;background:var(--panel);border-left:1px solid var(--line);
+    padding:20px;overflow-y:auto;flex-shrink:0;}
+  h1{font-size:16px;margin:0 0 4px;letter-spacing:.02em;}
+  .sub{color:var(--muted);font-size:12px;margin-bottom:18px;}
+  label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--muted);margin:16px 0 6px;}
+  select,input[type=range]{width:100%;background:#0d1117;color:var(--text);
+    border:1px solid var(--line);border-radius:6px;padding:8px;font-size:14px;}
+  select{cursor:pointer;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  .stat{background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:10px;}
+  .stat .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+  .stat .v{font-size:20px;font-weight:600;margin-top:2px;}
+  .shellRow{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;
+    border-bottom:1px dashed var(--line);color:var(--muted);}
+  .shellRow b{color:var(--text);}
+  #symbolBadge{font-size:42px;font-weight:700;line-height:1;margin-top:2px;}
+  #nameBadge{font-size:13px;color:var(--muted);}
+  .toggleRow{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;}
+  .hint{font-size:11px;color:var(--muted);margin-top:18px;line-height:1.5;border-top:1px solid var(--line);padding-top:12px;}
+  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:13px;}
+
+/* ===== injected: site nav header for lab tool pages ===== */
+:root{
+  --gold:#E8B75B; --physics:#7C8CFF; --chem:#38D6C0; --bio:#FF8A65;
+  --grid-line:rgba(255,255,255,0.08);
+  --display: 'Space Grotesk', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+header{flex-shrink:0; background:rgba(10,14,20,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--grid-line); position:relative; z-index:100;}
+header nav{display:flex; align-items:center; justify-content:space-between; padding:12px 20px; max-width:1400px; margin:0 auto;}
+header .brand{display:flex; align-items:center; gap:9px; font-family:var(--display); font-weight:700; font-size:16px; color:#e8ecf3;}
+header .brand-mark{width:22px; height:22px;}
+header .nav-links{display:flex; gap:22px; font-size:15px; color:#8b96a8; align-items:center;}
+header .nav-links a:hover{color:#e8ecf3;}
+header .nav-links a.current{color:#e8ecf3;}
+header .nav-cta{background:var(--gold); color:#151109; font-weight:600; font-size:15px; padding:10px 18px; border-radius:100px; border:none;}
+header .nav-toggle{display:none; background:none; border:none; color:#e8ecf3; font-size:24px;}
+@media(max-width:860px){
+  header .nav-links{position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:flex-start; background:#11161f; padding:16px 20px; gap:14px; border-bottom:1px solid var(--grid-line); display:none;}
+  header .nav-links.open{display:flex;}
+  header .nav-toggle{display:block;}
+}
+body.lab-tool-page{display:flex; flex-direction:column; height:100vh; overflow:hidden;}
+</style>
+
+<link rel="canonical" href="https://academy.gravitonlaboratories.workers.dev/atom-lab.html">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Procedural Atomic Model Generator — an interactive 3D tool from Graviton Academy's science lab.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Procedural Atomic Model Generator — Graviton Academy">
+<meta property="og:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
+<meta property="og:url" content="https://academy.gravitonlaboratories.workers.dev/atom-lab.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="lab-tool-page">
+<style>html.embedded header{display:none;} html.embedded .breadcrumb{display:none;}
+.breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:0; padding:13px 20px; font-size:14.5px; color:#5a6272; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; border-bottom:1px solid var(--line); flex-shrink:0;}
+.breadcrumb a{color:#8b96a8; text-decoration:none;}
+.breadcrumb a:hover{color:#5ec8f8;}
+.breadcrumb .crumb-sep{margin:0 8px; color:#5a6272;}
+.breadcrumb .crumb-current{color:#e8ecf3;}
+</style>
+<script>if (window.self !== window.top) { document.documentElement.classList.add('embedded'); }</script>
+<header>
+<nav>
+  <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="8" fill="#E8B75B"/>
+<ellipse cx="50" cy="50" rx="45" ry="18" fill="none" stroke="#7C8CFF" stroke-width="4"/>
+</svg> Graviton Academy</a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html#subjects" class="">Subjects</a>
+<a href="3d-lab.html" class="">3D Lab</a>
+<a href="pricing.html" class="">Pricing</a>
+<a href="about.html" class="">About</a>
+<a href="blog.html" class="">Blog</a>
+<a href="faq.html" class="">FAQ</a>
+<a href="contact.html" class="">Contact</a>
+
+    <a class="nav-cta" href="contact.html">Book a demo</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+</nav>
+</header>
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a> <span class="crumb-sep">/</span> <a href="3d-lab.html">3D Lab</a> <span class="crumb-sep">/</span> <span class="crumb-current">Atom Lab</span></nav>
+<div id="app">
+  <div id="canvasWrap"><div id="loading">Loading engine…</div></div>
+  <div id="panel">
+    <h1>Atomic Model Generator</h1>
+    <div class="sub">Procedural Bohr model — Three.js primitives only, no mesh assets</div>
+
+    <label for="elementSelect">Element</label>
+    <select id="elementSelect"></select>
+
+    <div id="symbolBadge">H</div>
+    <div id="nameBadge">Hydrogen</div>
+
+    <div class="grid">
+      <div class="stat"><div class="k">Protons</div><div class="v" id="statP">1</div></div>
+      <div class="stat"><div class="k">Neutrons</div><div class="v" id="statN">0</div></div>
+      <div class="stat"><div class="k">Electrons</div><div class="v" id="statE">1</div></div>
+      <div class="stat"><div class="k">Shells</div><div class="v" id="statS">1</div></div>
+    </div>
+
+    <label>Electronic configuration</label>
+    <div id="econfigLine" style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:var(--text); background:#0d1117; border:1px solid var(--line); border-radius:6px; padding:8px 10px;">2, 8, 1</div>
+
+    <div class="grid" style="grid-template-columns:1fr 1fr;">
+      <div class="stat"><div class="k">Valency</div><div class="v" id="statValency">1</div></div>
+      <div class="stat"><div class="k">Valence e⁻</div><div class="v" id="statValenceE">1</div></div>
+    </div>
+
+    <label>Shell configuration</label>
+    <div id="shellList"></div>
+
+    <label for="speedRange">Orbit speed</label>
+    <input type="range" id="speedRange" min="0" max="3" step="0.05" value="1">
+
+    <div class="toggleRow">
+      <input type="checkbox" id="autoRotate" checked>
+      <label style="margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text);" for="autoRotate">Auto-rotate camera</label>
+    </div>
+
+    <div class="hint">
+      Drag to rotate · scroll to zoom · shells and electron counts follow the
+      2n² filling rule (capped for real element configurations up to Z=30,
+      plus a few heavier reference elements). Valency uses the simplified
+      octet rule (outer shell electrons if ≤4, else 8 minus outer shell
+      electrons) — a Class 9-10 teaching approximation, not full oxidation-state chemistry.
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ---------------------------------------------------------
+   1. ELEMENT DATA — only the numbers; geometry is generated
+   ---------------------------------------------------------
+   shells = real electron-shell occupancy (not just 2n² capping,
+   since real atoms have exceptions after Z=20). Data covers
+   1-30 plus a handful of "important" heavier elements often
+   taught in 10-12 science (Ag, I, Au, Hg, Pb, U).
+----------------------------------------------------------*/
+const ELEMENTS = [
+ {z:1,sym:"H",name:"Hydrogen",mass:1,shells:[1]},
+ {z:2,sym:"He",name:"Helium",mass:4,shells:[2]},
+ {z:3,sym:"Li",name:"Lithium",mass:7,shells:[2,1]},
+ {z:4,sym:"Be",name:"Beryllium",mass:9,shells:[2,2]},
+ {z:5,sym:"B",name:"Boron",mass:11,shells:[2,3]},
+ {z:6,sym:"C",name:"Carbon",mass:12,shells:[2,4]},
+ {z:7,sym:"N",name:"Nitrogen",mass:14,shells:[2,5]},
+ {z:8,sym:"O",name:"Oxygen",mass:16,shells:[2,6]},
+ {z:9,sym:"F",name:"Fluorine",mass:19,shells:[2,7]},
+ {z:10,sym:"Ne",name:"Neon",mass:20,shells:[2,8]},
+ {z:11,sym:"Na",name:"Sodium",mass:23,shells:[2,8,1]},
+ {z:12,sym:"Mg",name:"Magnesium",mass:24,shells:[2,8,2]},
+ {z:13,sym:"Al",name:"Aluminium",mass:27,shells:[2,8,3]},
+ {z:14,sym:"Si",name:"Silicon",mass:28,shells:[2,8,4]},
+ {z:15,sym:"P",name:"Phosphorus",mass:31,shells:[2,8,5]},
+ {z:16,sym:"S",name:"Sulfur",mass:32,shells:[2,8,6]},
+ {z:17,sym:"Cl",name:"Chlorine",mass:35,shells:[2,8,7]},
+ {z:18,sym:"Ar",name:"Argon",mass:40,shells:[2,8,8]},
+ {z:19,sym:"K",name:"Potassium",mass:39,shells:[2,8,8,1]},
+ {z:20,sym:"Ca",name:"Calcium",mass:40,shells:[2,8,8,2]},
+ {z:21,sym:"Sc",name:"Scandium",mass:45,shells:[2,8,9,2]},
+ {z:22,sym:"Ti",name:"Titanium",mass:48,shells:[2,8,10,2]},
+ {z:23,sym:"V",name:"Vanadium",mass:51,shells:[2,8,11,2]},
+ {z:24,sym:"Cr",name:"Chromium",mass:52,shells:[2,8,13,1]},
+ {z:25,sym:"Mn",name:"Manganese",mass:55,shells:[2,8,13,2]},
+ {z:26,sym:"Fe",name:"Iron",mass:56,shells:[2,8,14,2]},
+ {z:27,sym:"Co",name:"Cobalt",mass:59,shells:[2,8,15,2]},
+ {z:28,sym:"Ni",name:"Nickel",mass:59,shells:[2,8,16,2]},
+ {z:29,sym:"Cu",name:"Copper",mass:64,shells:[2,8,18,1]},
+ {z:30,sym:"Zn",name:"Zinc",mass:65,shells:[2,8,18,2]},
+ {z:47,sym:"Ag",name:"Silver",mass:108,shells:[2,8,18,18,1]},
+ {z:53,sym:"I",name:"Iodine",mass:127,shells:[2,8,18,18,7]},
+ {z:79,sym:"Au",name:"Gold",mass:197,shells:[2,8,18,32,18,1]},
+ {z:80,sym:"Hg",name:"Mercury",mass:201,shells:[2,8,18,32,18,2]},
+ {z:82,sym:"Pb",name:"Lead",mass:207,shells:[2,8,18,32,18,4]},
+ {z:92,sym:"U",name:"Uranium",mass:238,shells:[2,8,18,32,21,9,2]},
+];
+
+/* ---------------------------------------------------------
+   2. THREE.JS SETUP
+----------------------------------------------------------*/
+const wrap = document.getElementById('canvasWrap');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x171e29);
+
+const camera = new THREE.PerspectiveCamera(50, wrap.clientWidth/wrap.clientHeight, 0.1, 1000);
+camera.position.set(0, 6, 16);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+document.getElementById('loading').remove();
+wrap.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+const key = new THREE.PointLight(0xffffff, 1.6, 100);
+key.position.set(10,10,10);
+scene.add(key);
+const rim = new THREE.PointLight(0x5ec8f8, 0.7, 100);
+rim.position.set(-10,-5,-10);
+scene.add(rim);
+const fill = new THREE.PointLight(0xffffff, 0.4, 100);
+fill.position.set(-8,6,-6);
+scene.add(fill);
+
+// simple orbit-style camera controls (no external OrbitControls dependency)
+let isDragging=false, prevX=0, prevY=0, camTheta=0.6, camPhi=1.1, camRadius=16;
+function updateCamera(){
+  camera.position.x = camRadius*Math.sin(camPhi)*Math.sin(camTheta);
+  camera.position.y = camRadius*Math.cos(camPhi);
+  camera.position.z = camRadius*Math.sin(camPhi)*Math.cos(camTheta);
+  camera.lookAt(0,0,0);
+}
+updateCamera();
+
+renderer.domElement.addEventListener('pointerdown', e=>{isDragging=true;prevX=e.clientX;prevY=e.clientY;});
+window.addEventListener('pointerup', ()=>isDragging=false);
+window.addEventListener('pointermove', e=>{
+  if(!isDragging) return;
+  const dx=e.clientX-prevX, dy=e.clientY-prevY;
+  camTheta -= dx*0.008;
+  camPhi = Math.min(Math.max(camPhi - dy*0.008, 0.2), Math.PI-0.2);
+  prevX=e.clientX; prevY=e.clientY;
+  updateCamera();
+});
+renderer.domElement.addEventListener('wheel', e=>{
+  e.preventDefault();
+  camRadius = Math.min(Math.max(camRadius + e.deltaY*0.01, 4), 60);
+  updateCamera();
+}, {passive:false});
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = wrap.clientWidth/wrap.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+});
+
+/* ---------------------------------------------------------
+   3. PROCEDURAL ATOM BUILDER
+   Given {z, shells}, generate nucleus + shell rings + electrons.
+   Everything below is pure geometry/math — no external assets.
+----------------------------------------------------------*/
+let atomGroup = new THREE.Group();
+scene.add(atomGroup);
+let electronOrbits = []; // {mesh, radius, speed, angle0, tiltX, tiltY}
+
+function clearAtom(){
+  scene.remove(atomGroup);
+  atomGroup.traverse(o=>{
+    if(o.geometry) o.geometry.dispose();
+    if(o.material) o.material.dispose();
+  });
+  atomGroup = new THREE.Group();
+  scene.add(atomGroup);
+  electronOrbits = [];
+}
+
+// Deterministic-ish packing for nucleons INSIDE the sphere's volume (not just its surface),
+// using rejection sampling so no two nucleons overlap.
+function packNucleonsInVolume(n, packRadius, nucleonRadius){
+  const pts = [];
+  const minDist = nucleonRadius * 1.85; // a little clearance so they read as distinct balls
+  const maxOffset = Math.max(packRadius - nucleonRadius, nucleonRadius*0.6);
+  for(let i=0;i<n;i++){
+    let placed = false;
+    for(let attempt=0; attempt<200 && !placed; attempt++){
+      // random point inside a sphere (uniform-ish via rejection on a cube)
+      let x,y,z,d2;
+      do{
+        x = (Math.random()*2-1); y = (Math.random()*2-1); z = (Math.random()*2-1);
+        d2 = x*x+y*y+z*z;
+      } while(d2 > 1 || d2 === 0);
+      const p = new THREE.Vector3(x,y,z).multiplyScalar(maxOffset);
+      let ok = true;
+      for(let j=0;j<pts.length;j++){
+        if(p.distanceTo(pts[j]) < minDist){ ok = false; break; }
+      }
+      if(ok){ pts.push(p); placed = true; }
+    }
+    if(!placed){
+      // fallback: place near center with small random jitter, still inside the sphere
+      const x = (Math.random()*2-1)*maxOffset*0.3;
+      const y = (Math.random()*2-1)*maxOffset*0.3;
+      const z = (Math.random()*2-1)*maxOffset*0.3;
+      pts.push(new THREE.Vector3(x,y,z));
+    }
+  }
+  return pts;
+}
+
+// Simplified octet-rule valency: an outer shell of <=4 electrons gives up that many
+// (valency = outer electrons); an outer shell of >4 needs that many more to complete
+// the octet (valency = 8 - outer electrons). This is the rule taught at Class 9-10 level
+// and is a teaching approximation, not a substitute for real oxidation-state chemistry.
+function computeValency(shells){
+  const outer = shells[shells.length-1];
+  if(outer <= 4) return outer;
+  return 8 - outer;
+}
+
+function buildAtom(el){
+  clearAtom();
+
+  const protons = el.z;
+  const neutrons = Math.max(Math.round(el.mass) - el.z, 0);
+  const nucleons = protons + neutrons;
+
+  // nucleus radius scales gently with nucleon count (visual, not to scale) — kept compact
+  const nucleonRadius = 0.17;
+  const packRadius = 0.2 + Math.cbrt(nucleons) * 0.2;
+
+  // place all nucleons at unique spots throughout the nucleus volume, then randomly
+  // label them proton/neutron — this guarantees no overlap and a filled-in look
+  const nucleonPts = packNucleonsInVolume(nucleons, packRadius, nucleonRadius);
+  const labels = new Array(nucleons).fill(false);
+  for(let i=0;i<protons;i++) labels[i] = true; // true = proton
+  for(let i=labels.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [labels[i],labels[j]] = [labels[j],labels[i]];
+  }
+
+  const outlineMat = new THREE.MeshBasicMaterial({color:0x05070a, side:THREE.BackSide, transparent:true, opacity:0.45});
+  const nucleonGeo = new THREE.SphereGeometry(nucleonRadius, 16, 16);
+  const protonMat = new THREE.MeshStandardMaterial({color:0xf45b69, roughness:0.4, metalness:0.1});
+  const neutronMat = new THREE.MeshStandardMaterial({color:0x4d5b73, roughness:0.5, metalness:0.1});
+
+  nucleonPts.forEach((p,i)=>{
+    const m = new THREE.Mesh(nucleonGeo, labels[i] ? protonMat : neutronMat);
+    m.position.copy(p);
+    const outline = new THREE.Mesh(nucleonGeo, outlineMat);
+    outline.scale.setScalar(1.14);
+    m.add(outline);
+    atomGroup.add(m);
+  });
+
+  // subtle glow + translucent wireframe wall so the nucleus reads as one bounded sphere
+  const glowGeo = new THREE.SphereGeometry(packRadius+0.5, 20, 20);
+  const glowMat = new THREE.MeshBasicMaterial({color:0xf45b69, transparent:true, opacity:0.05});
+  atomGroup.add(new THREE.Mesh(glowGeo, glowMat));
+  const wallGeo = new THREE.SphereGeometry(packRadius+0.5, 20, 20);
+  const wallMat = new THREE.MeshBasicMaterial({color:0xf45b69, transparent:true, opacity:0.1, wireframe:true});
+  atomGroup.add(new THREE.Mesh(wallGeo, wallMat));
+
+  // shells: each shell = ring (torus) tilted differently + evenly spaced electrons
+  const shellGap = 1.6;
+  const baseRadius = packRadius + 2.0;
+  const ringMat = new THREE.LineBasicMaterial({color:0x5ec8f8, transparent:true, opacity:0.35});
+  const electronGeo = new THREE.SphereGeometry(0.22, 12, 12);
+  const electronMat = new THREE.MeshStandardMaterial({color:0x5ec8f8, emissive:0x1a5f7a, emissiveIntensity:0.6, roughness:0.3});
+
+  el.shells.forEach((count, shellIndex)=>{
+    const radius = baseRadius + shellIndex*shellGap;
+    // tilt each shell differently so they read as distinct 3D orbits
+    const tiltX = shellIndex * 0.6 + 0.3;
+    const tiltY = shellIndex * 0.9;
+
+    // orbit ring line
+    const curve = new THREE.EllipseCurve(0,0, radius, radius, 0, Math.PI*2, false, 0);
+    const pts2d = curve.getPoints(128);
+    const ringGeo = new THREE.BufferGeometry().setFromPoints(
+      pts2d.map(p=>new THREE.Vector3(p.x, 0, p.y))
+    );
+    const ring = new THREE.LineLoop(ringGeo, ringMat);
+    ring.rotation.x = tiltX;
+    ring.rotation.y = tiltY;
+    atomGroup.add(ring);
+
+    // electrons evenly distributed on this shell
+    const container = new THREE.Group();
+    container.rotation.x = tiltX;
+    container.rotation.y = tiltY;
+    atomGroup.add(container);
+
+    for(let i=0;i<count;i++){
+      const angle0 = (i/count) * Math.PI*2;
+      const e = new THREE.Mesh(electronGeo, electronMat);
+      e.position.set(radius*Math.cos(angle0), 0, radius*Math.sin(angle0));
+      container.add(e);
+      electronOrbits.push({
+        mesh:e, radius, angle0,
+        speed: 0.6 / Math.sqrt(shellIndex+1) // inner shells orbit faster
+      });
+    }
+  });
+
+  document.getElementById('symbolBadge').textContent = el.sym;
+  document.getElementById('nameBadge').textContent = `${el.name} · Z=${el.z}`;
+  document.getElementById('statP').textContent = protons;
+  document.getElementById('statN').textContent = neutrons;
+  document.getElementById('statE').textContent = protons;
+  document.getElementById('statS').textContent = el.shells.length;
+  document.getElementById('econfigLine').textContent = el.shells.join(', ');
+  const outerElectrons = el.shells[el.shells.length-1];
+  document.getElementById('statValenceE').textContent = outerElectrons;
+  document.getElementById('statValency').textContent = computeValency(el.shells);
+
+  const shellList = document.getElementById('shellList');
+  shellList.innerHTML = '';
+  el.shells.forEach((c,i)=>{
+    const row = document.createElement('div');
+    row.className = 'shellRow';
+    const shellName = ['K','L','M','N','O','P','Q'][i] || `#${i+1}`;
+    row.innerHTML = `<span>Shell ${shellName} (n=${i+1})</span><b>${c} e⁻</b>`;
+    shellList.appendChild(row);
+  });
+}
+
+/* ---------------------------------------------------------
+   4. UI WIRING
+----------------------------------------------------------*/
+const select = document.getElementById('elementSelect');
+ELEMENTS.forEach(el=>{
+  const opt = document.createElement('option');
+  opt.value = el.z;
+  opt.textContent = `${el.z}. ${el.name} (${el.sym})`;
+  select.appendChild(opt);
+});
+select.addEventListener('change', ()=>{
+  const el = ELEMENTS.find(e=>e.z===parseInt(select.value));
+  buildAtom(el);
+});
+
+let orbitSpeedMult = 1;
+document.getElementById('speedRange').addEventListener('input', e=>{
+  orbitSpeedMult = parseFloat(e.target.value);
+});
+
+let autoRotate = true;
+document.getElementById('autoRotate').addEventListener('change', e=>{
+  autoRotate = e.target.checked;
+});
+
+buildAtom(ELEMENTS[0]);
+
+/* ---------------------------------------------------------
+   5. ANIMATION LOOP
+----------------------------------------------------------*/
+const clock = new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  electronOrbits.forEach(o=>{
+    const angle = o.angle0 + t * o.speed * orbitSpeedMult;
+    o.mesh.position.set(o.radius*Math.cos(angle), 0, o.radius*Math.sin(angle));
+  });
+
+  if(autoRotate && !isDragging){
+    camTheta += 0.0025;
+    updateCamera();
+  }
+
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+<script>document.getElementById('navToggle').addEventListener('click', ()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+});</script>
+</body>
+</html>

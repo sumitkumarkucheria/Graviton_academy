@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electrostatics (PHY 12.1) — Graviton Academy</title>
+<meta name="description" content="Sample topic page: Electrostatics for Grade 12 Physics, with an interactive 3D model, reference image, and interactive session panel — the standard layout used for every unit.">
+<link rel="canonical" href="https://academy.gravitonlaboratories.workers.dev/topic-template.html">
+
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Electrostatics (PHY 12.1) — Graviton Academy">
+<meta property="og:description" content="Sample topic page: Electrostatics for Grade 12 Physics, with an interactive 3D model, reference image, and interactive session panel — the standard layout used for every unit.">
+<meta property="og:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
+<meta property="og:url" content="https://academy.gravitonlaboratories.workers.dev/topic-template.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Electrostatics (PHY 12.1) — Graviton Academy">
+<meta name="twitter:description" content="Sample topic page: Electrostatics for Grade 12 Physics, with an interactive 3D model, reference image, and interactive session panel — the standard layout used for every unit.">
+<meta name="twitter:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0E14;
+  --bg-panel:#10151F;
+  --bg-panel-2:#141B27;
+  --grid-line:rgba(255,255,255,0.05);
+  --ink:#EDEFF4;
+  --ink-dim:#8A93A6;
+  --ink-faint:#5A6272;
+  --physics:#7C8CFF;
+  --chem:#38D6C0;
+  --bio:#FF8A65;
+  --gold:#E8B75B;
+  --radius:14px;
+  --display: 'Space Grotesk', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--body); line-height:1.6; overflow-x:hidden;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+a{color:inherit; text-decoration:none;}
+img,canvas{display:block; max-width:100%;}
+button{font-family:inherit; cursor:pointer;}
+:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+.eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-dim);}
+h1,h2,h3{font-family:var(--display); font-weight:600; letter-spacing:-0.01em;}
+
+/* NAV */
+header{position:sticky; top:0; z-index:50; background:rgba(10,14,20,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--grid-line);}
+nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:19px;}
+.brand-mark{width:26px; height:26px; position:relative;}
+.nav-links{display:flex; gap:26px; font-size:16px; color:var(--ink-dim); align-items:center;}
+.nav-links a:hover{color:var(--ink);}
+.nav-links a.current{color:var(--ink);}
+.nav-cta{background:var(--gold); color:#151109; font-weight:600; font-size:16px; padding:11px 20px; border-radius:100px; border:none;}
+.nav-toggle{display:none; background:none; border:none; color:var(--ink); font-size:26px;}
+@media(max-width:860px){
+  .nav-links{position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:flex-start; background:var(--bg-panel); padding:20px 24px; gap:18px; border-bottom:1px solid var(--grid-line); display:none;}
+  .nav-links.open{display:flex;}
+  .nav-toggle{display:block;}
+}
+
+/* PAGE HERO (inner pages) */
+.page-hero{padding:64px 0 40px;}
+.page-hero h1{font-size:clamp(30px,4.4vw,46px); margin:12px 0 16px; max-width:760px;}
+.page-hero p.lead{color:var(--ink-dim); font-size:17px; max-width:600px;}
+
+section{padding:80px 0;}
+.section-head{max-width:640px; margin-bottom:44px;}
+.section-head h2{font-size:clamp(24px,3.2vw,34px); margin:10px 0 14px;}
+.section-head p{color:var(--ink-dim); font-size:16px;}
+
+.btn-primary{background:var(--gold); color:#151109; font-weight:600; font-size:15px; padding:13px 22px; border-radius:100px; border:none; display:inline-block;}
+.btn-secondary{background:transparent; color:var(--ink); font-weight:500; font-size:15px; padding:13px 22px; border-radius:100px; border:1px solid var(--grid-line); display:inline-block;}
+.btn-secondary:hover{border-color:var(--ink-faint);}
+
+/* CARDS / PANELS */
+.card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:28px;}
+
+/* TRUST STRIP */
+.trust-strip{padding:34px 0; border-top:1px solid var(--grid-line); border-bottom:1px solid var(--grid-line);}
+.trust-strip .wrap{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:24px;}
+.trust-label{font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); white-space:nowrap;}
+.trust-marks{display:flex; flex-wrap:wrap; gap:32px; align-items:center; color:var(--ink-dim); font-family:var(--display); font-weight:600; font-size:16px;}
+.trust-marks span{opacity:.8;}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media(max-width:900px){.testi-grid{grid-template-columns:1fr;}}
+.testi-card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:26px;}
+.testi-quote{font-size:15px; color:var(--ink); margin-bottom:18px;}
+.testi-who{display:flex; align-items:center; gap:12px;}
+.testi-avatar{width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; font-size:14px; color:#0A0E14;}
+.testi-name{font-size:13px; font-weight:600;}
+.testi-role{font-size:12px; color:var(--ink-faint);}
+
+/* PRICING */
+.pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start;}
+@media(max-width:900px){.pricing-grid{grid-template-columns:1fr; max-width:460px; margin:0 auto;}}
+.price-card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:30px; display:flex; flex-direction:column; gap:18px;}
+.price-card.featured{border-color:var(--gold); background:linear-gradient(180deg, rgba(232,183,91,0.06), var(--bg-panel));}
+.price-tag{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); background:rgba(232,183,91,0.12); padding:4px 10px; border-radius:100px; width:fit-content;}
+.price-amount{font-family:var(--display); font-size:38px; font-weight:600;}
+.price-amount span{font-size:14px; color:var(--ink-dim); font-family:var(--body); font-weight:400;}
+.price-list{list-style:none; display:flex; flex-direction:column; gap:10px; font-size:14px; color:var(--ink-dim);}
+.price-list li{padding-left:22px; position:relative;}
+.price-list li::before{content:"✓"; position:absolute; left:0; color:var(--chem); font-weight:600;}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--grid-line);}
+.faq-q{padding:20px 4px; display:flex; align-items:center; justify-content:space-between; gap:16px; cursor:pointer; font-family:var(--display); font-weight:600; font-size:16px;}
+.faq-chevron{color:var(--ink-faint); transition:transform .25s ease; flex-shrink:0;}
+.faq-item.open .faq-chevron{transform:rotate(180deg);}
+.faq-a{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+.faq-a-inner{padding:0 4px 20px; color:var(--ink-dim); font-size:14px; max-width:680px;}
+
+/* FORM */
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr;}}
+.field{display:flex; flex-direction:column; gap:8px;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:13px; color:var(--ink-dim); font-family:var(--mono);}
+.field input, .field select, .field textarea{
+  background:var(--bg-panel-2); border:1px solid var(--grid-line); border-radius:10px; padding:12px 14px;
+  color:var(--ink); font-family:var(--body); font-size:14px;
+}
+.field textarea{resize:vertical; min-height:110px;}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--physics);}
+.form-note{font-size:12px; color:var(--ink-faint); margin-top:6px;}
+
+/* TEAM */
+.team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media(max-width:900px){.team-grid{grid-template-columns:1fr; max-width:420px; margin:0 auto;}}
+.team-card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:24px; text-align:left;}
+.team-avatar{width:56px; height:56px; border-radius:50%; margin-bottom:16px; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; font-size:18px; color:#0A0E14;}
+.team-name{font-family:var(--display); font-weight:600; font-size:16px; margin-bottom:2px;}
+.team-role{font-size:13px; color:var(--gold); font-family:var(--mono); margin-bottom:12px;}
+.team-bio{font-size:13px; color:var(--ink-dim);}
+
+/* VALUES */
+.value-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media(max-width:900px){.value-grid{grid-template-columns:1fr;}}
+.value-card{padding:0;}
+.value-icon{font-size:22px; margin-bottom:14px;}
+.value-card h3{font-size:17px; margin-bottom:8px;}
+.value-card p{font-size:14px; color:var(--ink-dim);}
+
+/* TIMELINE (about) */
+.timeline{display:flex; flex-direction:column; gap:0;}
+.tl-item{display:grid; grid-template-columns:100px 1fr; gap:24px; padding:20px 0; border-top:1px solid var(--grid-line);}
+.tl-item:last-child{border-bottom:1px solid var(--grid-line);}
+.tl-date{font-family:var(--mono); font-size:13px; color:var(--gold);}
+.tl-body h3{font-size:16px; margin-bottom:6px;}
+.tl-body p{font-size:14px; color:var(--ink-dim);}
+
+/* BLOG */
+.blog-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media(max-width:900px){.blog-grid{grid-template-columns:1fr; max-width:460px; margin:0 auto;}}
+.blog-card{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column;}
+.blog-card-top{height:120px; position:relative; overflow:hidden;}
+.blog-card-body{padding:20px 22px 24px; display:flex; flex-direction:column; gap:10px; flex:1;}
+.blog-tag{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;}
+.blog-card h3{font-size:16px; line-height:1.35;}
+.blog-meta{font-size:12px; color:var(--ink-faint); font-family:var(--mono); margin-top:auto;}
+.post-body{max-width:680px; font-size:16px; color:var(--ink-dim); display:flex; flex-direction:column; gap:20px;}
+.post-body h2{color:var(--ink); font-size:22px; margin-top:12px;}
+.post-body p{line-height:1.75;}
+.post-body ul{padding-left:20px; display:flex; flex-direction:column; gap:8px;}
+
+/* LEGAL */
+.legal-body{max-width:720px; display:flex; flex-direction:column; gap:22px; color:var(--ink-dim); font-size:15px; line-height:1.75;}
+.legal-body h2{color:var(--ink); font-size:19px; margin-top:8px;}
+.legal-body strong{color:var(--ink);}
+
+/* BREADCRUMB */
+.breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:0; padding:16px 24px; font-size:15px; color:var(--ink-faint);}
+.breadcrumb a{color:var(--ink-dim);}
+.breadcrumb a:hover{color:var(--gold);}
+.breadcrumb .crumb-sep{margin:0 8px; color:var(--ink-faint);}
+.breadcrumb .crumb-current{color:var(--ink);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
+.footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:32px; margin-bottom:40px;}
+@media(max-width:760px){.footer-grid{grid-template-columns:1fr 1fr;}}
+.footer-brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:17px; margin-bottom:12px;}
+.footer-desc{color:var(--ink-dim); font-size:13px; max-width:260px;}
+.footer-col h4{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); margin-bottom:14px;}
+.footer-col a{display:block; color:var(--ink-dim); font-size:14px; margin-bottom:10px;}
+.footer-col a:hover{color:var(--ink);}
+.footer-bottom{display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; padding-top:24px; border-top:1px solid var(--grid-line); color:var(--ink-faint); font-size:13px;}
+
+/* ===== TOPIC PAGE ===== */
+.topic-meta{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px;}
+.topic-code{font-family:var(--mono); font-size:12px; background:var(--bg-panel-2); border:1px solid var(--grid-line); padding:4px 10px; border-radius:100px; color:var(--ink-dim);}
+.topic-subject-tag{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:4px 10px; border-radius:100px;}
+
+.topic-layout{display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start;}
+@media(max-width:900px){ .topic-layout{grid-template-columns:1fr;} }
+
+.topic-stage{
+  background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius);
+  aspect-ratio:1/1; position:relative; overflow:hidden;
+}
+.topic-stage canvas{width:100%!important; height:100%!important; cursor:grab;}
+.topic-stage canvas:active{cursor:grabbing;}
+.stage-tag{
+  position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:11px;
+  background:rgba(10,14,20,0.7); border:1px solid var(--grid-line); padding:5px 10px; border-radius:100px; color:var(--ink-dim); z-index:2;
+}
+.stage-controls{position:absolute; bottom:14px; left:14px; right:14px; display:flex; gap:8px; flex-wrap:wrap; z-index:2;}
+.stage-controls button{
+  background:rgba(10,14,20,0.75); border:1px solid var(--grid-line); color:var(--ink-dim);
+  font-size:12px; padding:6px 12px; border-radius:100px;
+}
+.stage-controls button.active{background:var(--gold); color:#151109; border-color:var(--gold);}
+
+.topic-side{display:flex; flex-direction:column; gap:22px;}
+.topic-objectives{list-style:none; display:flex; flex-direction:column; gap:10px;}
+.topic-objectives li{padding-left:22px; position:relative; font-size:14px; color:var(--ink-dim);}
+.topic-objectives li::before{content:"→"; position:absolute; left:0; color:var(--gold);}
+
+.media-placeholder{
+  border:1.5px dashed var(--grid-line); border-radius:var(--radius); padding:40px 24px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center;
+  color:var(--ink-faint); background:var(--bg-panel-2); min-height:180px;
+}
+.media-placeholder .mp-icon{font-size:26px;}
+.media-placeholder .mp-title{font-family:var(--display); color:var(--ink-dim); font-size:14px;}
+.media-placeholder .mp-hint{font-size:12px; max-width:320px;}
+
+.replace-note{
+  background:rgba(232,183,91,0.08); border:1px solid rgba(232,183,91,0.3); border-radius:12px;
+  padding:16px 18px; font-size:13px; color:var(--ink-dim); display:flex; gap:12px; align-items:flex-start;
+}
+.replace-note .rn-icon{color:var(--gold); font-size:16px; flex-shrink:0;}
+.replace-note code{background:var(--bg-panel-2); padding:2px 6px; border-radius:6px; font-family:var(--mono); font-size:12px; color:var(--ink);}
+</style>
+</head>
+<body>
+<style>html.embedded header{display:none;} html.embedded .breadcrumb{display:none;}</style>
+<script>if (window.self !== window.top) { document.documentElement.classList.add('embedded'); }</script>
+<header>
+<nav>
+  <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="8" fill="#E8B75B"/>
+<ellipse cx="50" cy="50" rx="45" ry="18" fill="none" stroke="#7C8CFF" stroke-width="4"/>
+</svg> Graviton Academy</a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html#subjects" class="">Subjects</a>
+<a href="3d-lab.html" class="">3D Lab</a>
+<a href="previous-year-papers.html" class="">Previous Papers</a>
+<a href="pricing.html" class="">Pricing</a>
+<a href="about.html" class="">About</a>
+<a href="blog.html" class="">Blog</a>
+<a href="faq.html" class="">FAQ</a>
+<a href="contact.html" class="">Contact</a>
+
+    <a class="nav-cta" href="contact.html">Book a demo</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+</nav>
+</header>
+<nav class="breadcrumb wrap" aria-label="Breadcrumb"><a href="index.html">Home</a> <span class="crumb-sep">/</span> <a href="3d-lab.html">3D Lab</a> <span class="crumb-sep">/</span> <span class="crumb-current">Electrostatics Model</span></nav>
+<main>
+  <section class="page-hero wrap">
+    <div class="topic-meta">
+      <span class="topic-subject-tag" style="background:rgba(124,140,255,0.15); color:var(--physics);">Physics</span>
+      <span class="topic-code">PHY 12.1</span>
+      <span class="topic-code">Grade 12</span>
+    </div>
+    <h1>Electrostatics</h1>
+    <p class="lead">How charges create fields, how those fields exert force, and how that force shapes everything from lightning to photocopiers. This page is the standard template used for all 25+ units — duplicate it to build a new topic.</p>
+  </section>
+
+  <section class="wrap">
+    <div class="topic-layout">
+
+      <div class="topic-stage" id="topicStage">
+        <span class="stage-tag" id="modelSourceTag">Placeholder model · drag to rotate</span>
+        <canvas id="topicCanvas"></canvas>
+        <div class="stage-controls">
+          <button class="active" data-view="field">Field lines</button>
+          <button data-view="charges">Charges only</button>
+          <button data-view="stop">Pause spin</button>
+        </div>
+      </div>
+
+      <div class="topic-side">
+        <div class="card">
+          <p class="eyebrow" style="margin-bottom:10px;">About this topic</p>
+          <p style="color:var(--ink-dim); font-size:14px; line-height:1.7;">
+            A point charge doesn't just sit there — it reshapes the space around it. This model shows two charges and the field lines between them, so students can see attraction, repulsion, and field density directly instead of inferring it from arrows on paper.
+          </p>
+        </div>
+        <div class="card">
+          <p class="eyebrow" style="margin-bottom:10px;">Learning objectives</p>
+          <ul class="topic-objectives">
+            <li>Describe how like and unlike charges interact through a field</li>
+            <li>Relate field line density to field strength at a point</li>
+            <li>Predict the force on a test charge placed within the field</li>
+            <li>Connect this model to Coulomb's Law calculations</li>
+          </ul>
+        </div>
+        <div class="card">
+          <p class="eyebrow" style="margin-bottom:10px;">Syllabus mapping</p>
+          <p style="color:var(--ink-dim); font-size:14px;">Grade 12 Physics · Unit 1 — Electrostatics. Pairs with textbook sections on Coulomb's Law and electric field lines.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Reference diagram</p>
+      <h2>Static image or textbook figure</h2>
+      <p>Use this slot for a labelled diagram, a scanned textbook figure, or a photo — anything that supports the 3D model with a fixed reference view.</p>
+    </div>
+    <div class="media-placeholder">
+      <div class="mp-icon">🖼</div>
+      <div class="mp-title">Image placeholder</div>
+      <div class="mp-hint">Replace this block with an &lt;img&gt; tag pointing to your own diagram, e.g. <code>assets/images/electrostatics-diagram.png</code></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Interactive session</p>
+      <h2>Practice, quiz, or embedded activity</h2>
+      <p>Use this slot for anything beyond the 3D model — a short quiz, a simulation embed, or a worksheet link for this specific unit.</p>
+    </div>
+    <div class="media-placeholder">
+      <div class="mp-icon">▶</div>
+      <div class="mp-title">Interactive placeholder</div>
+      <div class="mp-hint">Replace this block with a quiz widget, an embedded simulation (&lt;iframe&gt;), or a link to a worksheet for this unit.</div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="replace-note">
+      <span class="rn-icon">i</span>
+      <div>
+        <strong style="color:var(--ink);">How to replace the 3D model on this page:</strong><br>
+        Drop a <code>.glb</code> file into <code>assets/models/</code> and point <code>MODEL_FILE</code> at it near the top of the script below — the page loads it automatically, no other code changes needed.
+        If no file is found (or none is set), it falls back to the built-in placeholder model shown above, so the page never breaks. See the full instructions in the script comments.
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+<div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand"><svg class="brand-mark" viewBox="0 0 100 100" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="8" fill="#E8B75B"/>
+<ellipse cx="50" cy="50" rx="45" ry="18" fill="none" stroke="#7C8CFF" stroke-width="4"/>
+</svg> Graviton Academy</div>
+      <p class="footer-desc">Interactive 3D physics, chemistry and biology for grades 9 through 12. Built by teachers and engineers who got tired of flat diagrams.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="index.html#subjects">Subjects</a>
+      <a href="class-10-syllabus.html">Class 10 Syllabus</a>
+      <a href="previous-year-papers.html">Previous Year Papers</a>
+      <a href="3d-lab.html">3D Lab</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="faq.html">FAQ</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="about.html">About</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+      <a href="mailto:hello@graviton.dpdns.org">hello@graviton.dpdns.org</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="refund.html">Refund Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Graviton Academy · graviton.dpdns.org</span>
+    <span>Made for grades 10–12, built for the way science actually looks.</span>
+  </div>
+</div>
+</footer>
+<script>document.getElementById('navToggle').addEventListener('click', ()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+});</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+/* =====================================================================
+   REPLACING THE 3D MODEL — READ THIS FIRST
+   =====================================================================
+   This page is the template every topic page is built from. There are
+   TWO ways to swap in your own model, pick whichever fits you:
+
+   OPTION A — Drop in a 3D file (no coding required)
+   ---------------------------------------------------------------------
+   1. Export or download a .glb file for your topic (Sketchfab, Blender,
+      etc. all export .glb).
+   2. Put it in this folder:  assets/models/electrostatics.glb
+   3. Set MODEL_FILE below to that path.
+   That's it — this page loads it automatically. To update a topic later,
+   just replace the .glb file with the same name; nothing else changes.
+
+   OPTION B — Build the model in code (for coders)
+   ---------------------------------------------------------------------
+   Leave MODEL_FILE as null, and edit the buildPlaceholderModel()
+   function further down — it receives the THREE.Scene and just needs to
+   add your meshes to it. This is the same pattern used for the atom,
+   molecule, and DNA models on the homepage.
+
+   Everything else on this page (rotation, drag-to-orbit, the pause/view
+   buttons, lighting, resizing) is handled for you and does not need to
+   change when you swap the model.
+   ===================================================================== */
+
+const MODEL_FILE = null; // e.g. "assets/models/electrostatics.glb" — set this to enable Option A
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function setupStage(canvasId, tagId){
+  const canvas = document.getElementById(canvasId);
+  const wrap = canvas.parentElement;
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 1.2, 6);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  const key = new THREE.DirectionalLight(0xffffff, 0.9);
+  key.position.set(4, 6, 5);
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0x7c8cff, 0.4);
+  rim.position.set(-5, -2, -4);
+  scene.add(rim);
+
+  const rig = new THREE.Group();
+  scene.add(rig);
+
+  function resize(){
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    renderer.setSize(w, h, false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // drag to rotate — same interaction pattern as the homepage lab cards
+  let dragging = false, lastX = 0, lastY = 0;
+  let autoSpin = !reduceMotion;
+  canvas.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
+  window.addEventListener('pointerup', () => dragging = false);
+  window.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    rig.rotation.y += (e.clientX - lastX) * 0.008;
+    rig.rotation.x += (e.clientY - lastY) * 0.008;
+    lastX = e.clientX; lastY = e.clientY;
+  });
+
+  function animate(){
+    if (autoSpin && !dragging) rig.rotation.y += 0.0035;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  return { rig, setAutoSpin: v => autoSpin = v };
+}
+
+/* ---- OPTION B: placeholder / procedural model ----
+   This builds the default two-charge field-line model shown on this
+   sample page. Replace the contents of this function with your own
+   THREE.js code to change what renders here. */
+function buildPlaceholderModel(rig){
+  const posMat = new THREE.MeshStandardMaterial({color:0xff8a65, roughness:0.35, metalness:0.1});
+  const negMat = new THREE.MeshStandardMaterial({color:0x7c8cff, roughness:0.35, metalness:0.1});
+  const pos = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), posMat);
+  pos.position.set(-1.4, 0, 0);
+  const neg = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), negMat);
+  neg.position.set(1.4, 0, 0);
+  rig.add(pos, neg);
+
+  // field lines: simple curved lines arcing between the two charges
+  const lineMat = new THREE.LineBasicMaterial({color:0xe8b75b, transparent:true, opacity:0.55});
+  for (let i=-2; i<=2; i++){
+    const yOff = i * 0.5;
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-1.4, 0, 0),
+      new THREE.Vector3(0, yOff*1.6, yOff*0.9),
+      new THREE.Vector3(1.4, 0, 0)
+    ]);
+    const points = curve.getPoints(40);
+    const geo = new THREE.BufferGeometry().setFromPoints(points);
+    rig.add(new THREE.Line(geo, lineMat));
+  }
+  return { pos, neg };
+}
+
+const stage = setupStage('topicCanvas', 'modelSourceTag');
+const tag = document.getElementById('modelSourceTag');
+let modelParts = null;
+
+if (MODEL_FILE) {
+  tag.textContent = 'Loading custom model…';
+  const loader = new THREE.GLTFLoader();
+  loader.load(
+    MODEL_FILE,
+    gltf => {
+      stage.rig.add(gltf.scene);
+      tag.textContent = 'Custom model · drag to rotate';
+    },
+    undefined,
+    err => {
+      console.warn('Could not load MODEL_FILE, falling back to placeholder:', err);
+      modelParts = buildPlaceholderModel(stage.rig);
+      tag.textContent = 'Placeholder model · drag to rotate';
+    }
+  );
+} else {
+  modelParts = buildPlaceholderModel(stage.rig);
+}
+
+// view toggle buttons (only affect the placeholder model's field lines)
+document.querySelectorAll('.stage-controls button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.stage-controls button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    if (view === 'stop'){ stage.setAutoSpin(false); return; }
+    stage.setAutoSpin(!reduceMotion);
+    if (!modelParts) return;
+    stage.rig.children.forEach(obj => {
+      if (obj.type === 'Line') obj.visible = (view === 'field');
+    });
+  });
+});
+</script>
+</body>
+</html>

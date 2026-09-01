@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Biology 3D Model Viewer</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#11161f; --line:#1e2632; --text:#e8ecf3; --muted:#8b96a8;
+    --accent:#FF8A65; --accent2:#f6a55c;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;overflow:hidden;}
+  #app{display:flex;flex:1;min-height:0;width:100%;}
+  #canvasWrap{flex:1;position:relative;}
+  canvas{display:block;width:100%;height:100%;}
+  #panel{width:300px;background:var(--panel);border-left:1px solid var(--line);
+    padding:20px;overflow-y:auto;flex-shrink:0;}
+  h1{font-size:16px;margin:0 0 4px;letter-spacing:.02em;}
+  .sub{color:var(--muted);font-size:12px;margin-bottom:18px;}
+  label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--muted);margin:16px 0 6px;}
+  select,input[type=range]{width:100%;background:#0d1117;color:var(--text);
+    border:1px solid var(--line);border-radius:6px;padding:8px;font-size:14px;}
+  select{cursor:pointer;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  .stat{background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:10px;}
+  .stat .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+  .stat .v{font-size:14px;font-weight:600;margin-top:2px;line-height:1.3;}
+  #nameBadge{font-size:22px;font-weight:700;line-height:1.15;margin-top:2px;color:var(--accent);}
+  #tagBadge{font-size:12px;color:var(--muted);margin-top:2px;}
+  #descText{font-size:12.5px;color:var(--text);line-height:1.55;margin-top:10px;}
+  .toggleRow{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;}
+  .hint{font-size:11px;color:var(--muted);margin-top:18px;line-height:1.5;border-top:1px solid var(--line);padding-top:12px;}
+  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:13px;}
+  #missingNote{
+    position:absolute; top:14px; left:14px; right:14px; background:rgba(20,26,36,0.92);
+    border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:12px;
+    color:var(--muted); display:none; line-height:1.5;
+  }
+  #missingNote code{color:var(--accent); word-break:break-all;}
+
+/* ===== injected: site nav header for lab tool pages ===== */
+:root{
+  --gold:#E8B75B; --physics:#7C8CFF; --chem:#38D6C0; --bio:#FF8A65;
+  --grid-line:rgba(255,255,255,0.08);
+  --display: 'Space Grotesk', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+header{flex-shrink:0; background:rgba(10,14,20,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--grid-line); position:relative; z-index:100;}
+header nav{display:flex; align-items:center; justify-content:space-between; padding:12px 20px; max-width:1400px; margin:0 auto;}
+header .brand{display:flex; align-items:center; gap:9px; font-family:var(--display); font-weight:700; font-size:16px; color:#e8ecf3;}
+header .brand-mark{width:22px; height:22px;}
+header .nav-links{display:flex; gap:22px; font-size:15px; color:#8b96a8; align-items:center;}
+header .nav-links a:hover{color:#e8ecf3;}
+header .nav-links a.current{color:#e8ecf3;}
+header .nav-cta{background:var(--gold); color:#151109; font-weight:600; font-size:15px; padding:10px 18px; border-radius:100px; border:none;}
+header .nav-toggle{display:none; background:none; border:none; color:#e8ecf3; font-size:24px;}
+@media(max-width:860px){
+  header .nav-links{position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:flex-start; background:#11161f; padding:16px 20px; gap:14px; border-bottom:1px solid var(--grid-line); display:none;}
+  header .nav-links.open{display:flex;}
+  header .nav-toggle{display:block;}
+}
+body.lab-tool-page{display:flex; flex-direction:column; height:100vh; overflow:hidden;}
+</style>
+
+<link rel="canonical" href="https://academy.gravitonlaboratories.workers.dev/biology-lab.html">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="description" content="Biology 3D Model Viewer — an interactive 3D tool from Graviton Academy's science lab.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Biology 3D Model Viewer — Graviton Academy">
+<meta property="og:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
+<meta property="og:url" content="https://academy.gravitonlaboratories.workers.dev/biology-lab.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="lab-tool-page">
+<style>html.embedded header{display:none;} html.embedded .breadcrumb{display:none;}
+.breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:0; padding:13px 20px; font-size:14.5px; color:#5a6272; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; border-bottom:1px solid var(--line); flex-shrink:0;}
+.breadcrumb a{color:#8b96a8; text-decoration:none;}
+.breadcrumb a:hover{color:#5ec8f8;}
+.breadcrumb .crumb-sep{margin:0 8px; color:#5a6272;}
+.breadcrumb .crumb-current{color:#e8ecf3;}
+</style>
+<script>if (window.self !== window.top) { document.documentElement.classList.add('embedded'); }</script>
+<header>
+<nav>
+  <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="8" fill="#E8B75B"/>
+<ellipse cx="50" cy="50" rx="45" ry="18" fill="none" stroke="#7C8CFF" stroke-width="4"/>
+</svg> Graviton Academy</a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html#subjects" class="">Subjects</a>
+<a href="3d-lab.html" class="">3D Lab</a>
+<a href="pricing.html" class="">Pricing</a>
+<a href="about.html" class="">About</a>
+<a href="blog.html" class="">Blog</a>
+<a href="faq.html" class="">FAQ</a>
+<a href="contact.html" class="">Contact</a>
+
+    <a class="nav-cta" href="contact.html">Book a demo</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+</nav>
+</header>
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a> <span class="crumb-sep">/</span> <a href="3d-lab.html">3D Lab</a> <span class="crumb-sep">/</span> <span class="crumb-current">Biology Lab</span></nav>
+<div id="app">
+  <div id="canvasWrap"><div id="loading">Loading engine…</div><div id="missingNote"></div></div>
+  <div id="panel">
+    <h1>Biology 3D Model Viewer</h1>
+    <div class="sub">Upload .glb models, or pick a built-in procedural one</div>
+
+    <label for="modelSelect">Model</label>
+    <select id="modelSelect"></select>
+
+    <div id="nameBadge">Plant Cell</div>
+    <div id="tagBadge">Biology · Class 9-10</div>
+    <div id="descText"></div>
+    <div id="sourceNote" style="font-size:11px; color:var(--muted); margin-top:8px; font-style:italic;"></div>
+
+    <div class="grid">
+      <div class="stat"><div class="k">Subject</div><div class="v" id="statSubject">Biology</div></div>
+      <div class="stat"><div class="k">Grade</div><div class="v" id="statGrade">9-10</div></div>
+    </div>
+
+    <label for="speedRange">Rotation speed</label>
+    <input type="range" id="speedRange" min="0" max="3" step="0.05" value="1">
+
+    <div class="toggleRow">
+      <input type="checkbox" id="autoRotate" checked>
+      <label style="margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text);" for="autoRotate">Auto-rotate camera</label>
+    </div>
+
+    <div class="hint" id="hintText">
+      Drag to rotate · scroll to zoom. Each uploaded entry loads a .glb file from
+      <code style="color:var(--accent);">assets/models/biology/</code> —
+      see the README in that folder for the exact filename each slot expects.
+      Procedural entries are built entirely in code — nothing to upload for those.
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+/* ---------------------------------------------------------
+   1. MODEL DATA — every entry is a real file you upload to
+   assets/models/biology/. There is no procedural fallback
+   geometry here (unlike the Atom/Molecule labs) — only a
+   placeholder wireframe shown until the file exists.
+   See assets/models/biology/README.md for exact filenames.
+   ---------------------------------------------------------*/
+/* ---------------------------------------------------------
+   1a. PROCEDURAL MODELS — built entirely in Three.js code,
+   no .glb file needed. Each builder returns {group, update}:
+   group is added to the scene, update(elapsed) runs every
+   frame for animated bits (flowing particles, field markers).
+   ---------------------------------------------------------*/
+
+// Double circulation: pulmonary loop (heart<->lungs) + systemic loop
+// (heart<->body). Red = oxygenated, blue = deoxygenated — flow direction
+// is shown with small glowing particles traveling along each vessel.
+function buildCirculatorySystem(){
+  const group = new THREE.Group();
+
+  const heart = new THREE.Mesh(
+    new THREE.SphereGeometry(1.4, 24, 24),
+    new THREE.MeshStandardMaterial({color:0xE84C4C, roughness:0.5})
+  );
+  group.add(heart);
+
+  function makeVessel(points, color, radius){
+    const curve = new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],p[1],p[2])));
+    const geo = new THREE.TubeGeometry(curve, 64, radius, 10, false);
+    const mat = new THREE.MeshStandardMaterial({color, roughness:0.45, transparent:true, opacity:0.88});
+    group.add(new THREE.Mesh(geo, mat));
+    return curve;
+  }
+
+  function makeCapillaryBed(center, color){
+    const core = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.9, 1),
+      new THREE.MeshStandardMaterial({color, wireframe:true, transparent:true, opacity:0.55})
+    );
+    core.position.set(center[0], center[1], center[2]);
+    group.add(core);
+  }
+
+  // Pulmonary circuit — heart to lungs (upper-left) and back
+  const pulmArtery = makeVessel([[0,1,0.6],[-1.5,3,1.2],[-3.2,5,0.6],[-4,6.4,0]], 0x4C7EE8, 0.28);
+  makeCapillaryBed([-4,6.4,0], 0x8B6CE8);
+  const pulmVein = makeVessel([[-4,6.4,0],[-3,5,-1],[-1.2,3,-0.8],[0,1,-0.4]], 0xE84C4C, 0.28);
+
+  // Systemic circuit — heart to body (lower-right) and back
+  const aorta = makeVessel([[0.6,0.5,0],[2.5,-1,1.4],[4.8,-3,2],[6,-5,1.4]], 0xE84C4C, 0.3);
+  makeCapillaryBed([6,-5,1.4], 0xE86C9C);
+  const venaCava = makeVessel([[6,-5,1.4],[4.6,-3,-0.6],[2.3,-1,-1.2],[-0.6,0.4,-0.3]], 0x4C7EE8, 0.3);
+
+  const flows = [
+    {curve:pulmArtery, color:0x9FC3FF, speed:0.15, count:5},
+    {curve:pulmVein,   color:0xFFA8A8, speed:0.15, count:5},
+    {curve:aorta,      color:0xFFA8A8, speed:0.12, count:6},
+    {curve:venaCava,   color:0x9FC3FF, speed:0.12, count:6},
+  ];
+  const particles = [];
+  flows.forEach(f=>{
+    for(let i=0;i<f.count;i++){
+      const p = new THREE.Mesh(
+        new THREE.SphereGeometry(0.16, 10, 10),
+        new THREE.MeshStandardMaterial({color:f.color, emissive:f.color, emissiveIntensity:0.8})
+      );
+      p.userData = {curve:f.curve, offset:i/f.count, speed:f.speed};
+      group.add(p);
+      particles.push(p);
+    }
+  });
+
+  function update(elapsed){
+    particles.forEach(p=>{
+      const t = (elapsed*p.userData.speed + p.userData.offset) % 1;
+      p.position.copy(p.userData.curve.getPointAt(t));
+    });
+  }
+
+  return {group, update};
+}
+
+// Solenoid magnetic field. NOTE this is a Physics/electromagnetism topic,
+// not Biology — included here because that was asked for, but it belongs
+// alongside Atom Lab / a Physics viewer if this ever gets split by subject.
+// Physics note: field lines INSIDE a solenoid are straight and parallel
+// (uniform field) — the helix you see is the wire coil itself, not the
+// field. Outside, the field loops around like a bar magnet's field.
+function buildSolenoidField(){
+  const group = new THREE.Group();
+  const turns = 10, coilRadius = 2, coilHeight = 6, ptsPerTurn = 24;
+  const totalPts = turns * ptsPerTurn;
+  const coilPoints = [];
+  for(let i=0;i<=totalPts;i++){
+    const t = i/totalPts;
+    const angle = t*turns*Math.PI*2;
+    coilPoints.push(new THREE.Vector3(
+      coilRadius*Math.cos(angle),
+      -coilHeight/2 + t*coilHeight,
+      coilRadius*Math.sin(angle)
+    ));
+  }
+  const coilCurve = new THREE.CatmullRomCurve3(coilPoints);
+  const coilGeo = new THREE.TubeGeometry(coilCurve, totalPts, 0.12, 8, false);
+  const coilMat = new THREE.MeshStandardMaterial({color:0xE8B75B, metalness:0.5, roughness:0.35});
+  group.add(new THREE.Mesh(coilGeo, coilMat));
+
+  // current-direction arrows along the coil
+  for(let i=0;i<8;i++){
+    const t = i/8;
+    const cone = new THREE.Mesh(
+      new THREE.ConeGeometry(0.22, 0.5, 8),
+      new THREE.MeshStandardMaterial({color:0xffffff, emissive:0xE8B75B, emissiveIntensity:0.5})
+    );
+    cone.position.copy(coilCurve.getPointAt(t));
+    cone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), coilCurve.getTangentAt(t).clone().normalize());
+    group.add(cone);
+  }
+
+  // Internal field lines — straight, parallel, evenly spread across the bore
+  const innerCount = 5;
+  for(let i=0;i<innerCount;i++){
+    const r = (i/(innerCount-1) - 0.5) * coilRadius * 1.3;
+    if(Math.abs(r) > coilRadius*0.85) continue;
+    const y0 = -coilHeight/2 - 1, y1 = coilHeight/2 + 1;
+    const geo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(r,y0,0), new THREE.Vector3(r,y1,0)
+    ]);
+    const mat = new THREE.LineDashedMaterial({color:0x5EC8F8, dashSize:0.4, gapSize:0.25, transparent:true, opacity:0.85});
+    const line = new THREE.Line(geo, mat);
+    line.computeLineDistances();
+    group.add(line);
+    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.16,0.4,8), new THREE.MeshBasicMaterial({color:0x5EC8F8}));
+    arrow.position.set(r, y1, 0);
+    group.add(arrow);
+  }
+
+  // External field lines — loop around like a bar magnet, both sides for symmetry
+  const externalCurves = [];
+  const outerCount = 5;
+  for(let i=0;i<outerCount;i++){
+    const spread = 1.2 + i*0.6;
+    const topPt = new THREE.Vector3(coilRadius*0.6, coilHeight/2, 0);
+    const botPt = new THREE.Vector3(coilRadius*0.6, -coilHeight/2, 0);
+    const curve = new THREE.CatmullRomCurve3([
+      topPt,
+      new THREE.Vector3(coilRadius+spread*0.6, coilHeight*0.32, 0),
+      new THREE.Vector3(coilRadius+spread, 0, 0),
+      new THREE.Vector3(coilRadius+spread*0.6, -coilHeight*0.32, 0),
+      botPt
+    ]);
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(60));
+    const lineMat = new THREE.LineBasicMaterial({color:0x8FE0FF, transparent:true, opacity:0.55});
+    const line = new THREE.Line(lineGeo, lineMat);
+    group.add(line);
+    const mirror = new THREE.Line(lineGeo.clone(), lineMat.clone());
+    mirror.rotation.y = Math.PI;
+    group.add(mirror);
+    externalCurves.push(curve);
+  }
+
+  const markers = [];
+  externalCurves.forEach((curve,i)=>{
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.14,8,8), new THREE.MeshBasicMaterial({color:0xBFEEFF}));
+    m.userData = {curve, offset:i/externalCurves.length};
+    group.add(m);
+    markers.push(m);
+  });
+
+  function update(elapsed){
+    markers.forEach(m=>{
+      const t = (elapsed*0.12 + m.userData.offset) % 1;
+      m.position.copy(m.userData.curve.getPointAt(t));
+    });
+  }
+
+  return {group, update};
+}
+
+// Human eye cross-section — built from nested half-spheres (sclera, retina,
+// vitreous) sliced along one vertical plane so the cut face reads as a
+// literal cross-section, plus a lathe-revolved lens and a ring-shaped iris.
+// If the cut ever looks like it opens the wrong way after you test it, flip
+// the sign of CUT_PHI_START below — it's the one number that controls it.
+function buildEyeCrossSection(){
+  const group = new THREE.Group();
+  const R = 3;
+  const CUT_PHI_START = -Math.PI/2, CUT_PHI_LEN = Math.PI; // keeps the -X half, opens toward +X
+
+  function shell(radius, color, opacity, roughness){
+    const geo = new THREE.SphereGeometry(radius, 40, 40, CUT_PHI_START, CUT_PHI_LEN);
+    const mat = new THREE.MeshStandardMaterial({color, roughness, transparent:opacity<1, opacity, side:THREE.DoubleSide});
+    return new THREE.Mesh(geo, mat);
+  }
+
+  group.add(shell(R, 0xF5F1E8, 1, 0.6));        // sclera — outer white layer
+  group.add(shell(R-0.15, 0x6B4A35, 1, 0.7));   // choroid — pigmented middle layer
+  group.add(shell(R-0.3, 0xC94F4F, 1, 0.8));    // retina — innermost layer
+  group.add(shell(R-0.45, 0xBFE3FF, 0.28, 0.1)); // vitreous humor — fills the main chamber
+
+  // Lens — biconvex profile revolved with LatheGeometry (revolves around Y
+  // by default; rotated 90° about X so it sits along the eye's Z axis).
+  const lensProfile = [];
+  for(let i=0;i<=20;i++){
+    const t = i/20;
+    const y = (t-0.5)*1.1;
+    const x = Math.max(0.001, 0.55*Math.sqrt(Math.max(0, 1-(y/0.58)*(y/0.58))));
+    lensProfile.push(new THREE.Vector2(x, y));
+  }
+  const lens = new THREE.Mesh(
+    new THREE.LatheGeometry(lensProfile, 32),
+    new THREE.MeshPhysicalMaterial({color:0xDDEEFF, transparent:true, opacity:0.5, roughness:0.05})
+  );
+  lens.rotation.x = Math.PI/2;
+  lens.position.set(0, 0, R-1.3);
+  group.add(lens);
+
+  // Iris + pupil, just in front of the lens
+  const iris = new THREE.Mesh(
+    new THREE.RingGeometry(0.35, 1.3, 40),
+    new THREE.MeshStandardMaterial({color:0x8B5A2B, roughness:0.6, side:THREE.DoubleSide})
+  );
+  iris.position.set(0, 0, R-1.0);
+  group.add(iris);
+  const pupil = new THREE.Mesh(
+    new THREE.CircleGeometry(0.35, 32),
+    new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide})
+  );
+  pupil.position.set(0, 0, R-0.99);
+  group.add(pupil);
+
+  // Cornea — clear bulge at the front pole
+  const cornea = new THREE.Mesh(
+    new THREE.SphereGeometry(1.6, 32, 32, 0, Math.PI*2, 0, Math.PI*0.42),
+    new THREE.MeshPhysicalMaterial({color:0xEAF6FF, transparent:true, opacity:0.5, roughness:0.05, side:THREE.DoubleSide})
+  );
+  cornea.rotation.x = Math.PI;
+  cornea.position.set(0, 0, R-0.2);
+  group.add(cornea);
+
+  // Optic nerve — protrudes from the back pole
+  const nerve = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.35, 0.45, 1.6, 16),
+    new THREE.MeshStandardMaterial({color:0xE8D9B5})
+  );
+  nerve.rotation.x = Math.PI/2;
+  nerve.position.set(0, 0, -R-0.6);
+  group.add(nerve);
+
+  return {group, update:null};
+}
+
+const BIO_MODELS = [
+  { name:"Plant Cell", tag:"Biology · Class 9-10", grade:"9-10",
+    file:"assets/models/biology/plant-cell.glb",
+    desc:"Cell wall, chloroplasts, large central vacuole, and other plant-specific organelles." },
+  { name:"Animal Cell", tag:"Biology · Class 9-10", grade:"9-10",
+    file:"assets/models/biology/animal-cell.glb",
+    desc:"Nucleus, mitochondria, endoplasmic reticulum, and the rest of a typical animal cell." },
+  { name:"Human Heart", tag:"Human Physiology · Grade 11", grade:"11",
+    file:"assets/models/biology/human-heart.glb",
+    desc:"Four chambers, valves, and the major vessels entering and leaving the heart." },
+  { name:"Human Eye", tag:"Class 10 · Ch10 Human Eye", grade:"10",
+    file:"assets/models/biology/human-eye.glb",
+    desc:"Cornea, lens, retina, and the rest of the eye's optical structure." },
+  { name:"Neuron", tag:"Neural & Hormonal Control", grade:"11",
+    file:"assets/models/biology/neuron.glb",
+    desc:"Dendrites, cell body, axon, and myelin sheath of a typical neuron." },
+  { name:"DNA Double Helix", tag:"Molecular Basis of Inheritance", grade:"12",
+    file:"assets/models/biology/dna-double-helix.glb",
+    desc:"Sugar-phosphate backbone and base-pair rungs of the double helix." },
+  { name:"Human Kidney", tag:"Human Physiology · Excretion", grade:"11",
+    file:"assets/models/biology/human-kidney.glb",
+    desc:"Cortex, medulla, and the internal structure of a kidney." },
+  { name:"Human Brain", tag:"Neural Control & Coordination", grade:"10-11",
+    file:"assets/models/biology/human-brain.glb",
+    desc:"Cerebrum, cerebellum, and brainstem, shown as a single external structure." },
+
+  { name:"Circulatory System (Flow)", tag:"Biology · Class 10 · Life Processes", grade:"10",
+    type:"procedural", build:buildCirculatorySystem,
+    desc:"Double circulation — pulmonary loop (heart↔lungs) and systemic loop (heart↔body). Red = oxygenated, blue = deoxygenated; particles show flow direction." },
+  { name:"Solenoid Magnetic Field", tag:"Physics · Magnetism", grade:"10-12",
+    type:"procedural", build:buildSolenoidField,
+    desc:"Not a Biology topic — included here on request. Field lines run straight and parallel inside the coil, and loop around outside like a bar magnet." },
+  { name:"Human Eye (Cross-section)", tag:"Class 10 · Ch10 Human Eye", grade:"10",
+    type:"procedural", build:buildEyeCrossSection,
+    desc:"Sclera, choroid, retina, vitreous humor, lens, iris, pupil, cornea, and optic nerve, sliced open to show the internal layout." },
+];
+
+/* ---------------------------------------------------------
+   2. THREE.JS SETUP — same simple orbit-style camera controls
+   as the Atom Lab, no external OrbitControls dependency.
+----------------------------------------------------------*/
+const wrap = document.getElementById('canvasWrap');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x171e29);
+
+const camera = new THREE.PerspectiveCamera(50, wrap.clientWidth/wrap.clientHeight, 0.1, 1000);
+camera.position.set(0, 6, 16);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+document.getElementById('loading').remove();
+wrap.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+const key = new THREE.PointLight(0xffffff, 1.6, 100);
+key.position.set(10,10,10);
+scene.add(key);
+const rim = new THREE.PointLight(0xFF8A65, 0.6, 100);
+rim.position.set(-10,-5,-10);
+scene.add(rim);
+const fill = new THREE.PointLight(0xffffff, 0.4, 100);
+fill.position.set(-8,6,-6);
+scene.add(fill);
+
+let isDragging=false, prevX=0, prevY=0, camTheta=0.6, camPhi=1.1, camRadius=16;
+function updateCamera(){
+  camera.position.x = camRadius*Math.sin(camPhi)*Math.sin(camTheta);
+  camera.position.y = camRadius*Math.cos(camPhi);
+  camera.position.z = camRadius*Math.sin(camPhi)*Math.cos(camTheta);
+  camera.lookAt(0,0,0);
+}
+updateCamera();
+
+renderer.domElement.addEventListener('pointerdown', e=>{isDragging=true;prevX=e.clientX;prevY=e.clientY;});
+window.addEventListener('pointerup', ()=>isDragging=false);
+window.addEventListener('pointermove', e=>{
+  if(!isDragging) return;
+  const dx=e.clientX-prevX, dy=e.clientY-prevY;
+  camTheta -= dx*0.008;
+  camPhi = Math.min(Math.max(camPhi - dy*0.008, 0.2), Math.PI-0.2);
+  prevX=e.clientX; prevY=e.clientY;
+  updateCamera();
+});
+renderer.domElement.addEventListener('wheel', e=>{
+  e.preventDefault();
+  camRadius = Math.min(Math.max(camRadius + e.deltaY*0.01, 2), 60);
+  updateCamera();
+}, {passive:false});
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = wrap.clientWidth/wrap.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+});
+
+/* ---------------------------------------------------------
+   3. MODEL LOADING
+   Loads the .glb for the selected entry, centers + scales it
+   to a consistent viewing size. If the file is missing or
+   fails to load, shows a placeholder wireframe + an on-screen
+   note naming the exact path expected, instead of breaking.
+----------------------------------------------------------*/
+let modelGroup = new THREE.Group();
+scene.add(modelGroup);
+let spinning = true;
+
+function clearModel(){
+  scene.remove(modelGroup);
+  modelGroup.traverse(o=>{
+    if(o.geometry) o.geometry.dispose();
+    if(o.material) o.material.dispose();
+  });
+  modelGroup = new THREE.Group();
+  scene.add(modelGroup);
+}
+
+function buildPlaceholder(){
+  const geo = new THREE.IcosahedronGeometry(3.2, 1);
+  const mat = new THREE.MeshBasicMaterial({color:0xFF8A65, wireframe:true, transparent:true, opacity:0.55});
+  modelGroup.add(new THREE.Mesh(geo, mat));
+  const glow = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(3.2, 1),
+    new THREE.MeshBasicMaterial({color:0xFF8A65, transparent:true, opacity:0.06})
+  );
+  modelGroup.add(glow);
+}
+
+function frameModel(object){
+  const box = new THREE.Box3().setFromObject(object);
+  const size = new THREE.Vector3(); box.getSize(size);
+  const center = new THREE.Vector3(); box.getCenter(center);
+  const maxDim = Math.max(size.x, size.y, size.z) || 1;
+  const targetSize = 7; // consistent on-screen size across all models
+  const scaleFactor = targetSize / maxDim;
+  // scale first, then offset by the (now-scaled) center — doing it in the
+  // opposite order left off-center models when scaleFactor != 1
+  object.scale.multiplyScalar(scaleFactor);
+  object.position.copy(center).multiplyScalar(-scaleFactor);
+}
+
+let currentUpdate = null;
+const clock = new THREE.Clock();
+
+function loadModel(entry){
+  clearModel();
+  currentUpdate = null;
+  const note = document.getElementById('missingNote');
+  note.style.display = 'none';
+
+  if(entry.type === 'procedural'){
+    const built = entry.build();
+    frameModel(built.group);
+    modelGroup.add(built.group);
+    currentUpdate = built.update || null;
+    return;
+  }
+
+  const loader = new THREE.GLTFLoader();
+  loader.load(
+    entry.file,
+    gltf=>{
+      frameModel(gltf.scene);
+      modelGroup.add(gltf.scene);
+    },
+    undefined,
+    err=>{
+      console.warn('Could not load '+entry.file+', showing placeholder instead:', err);
+      buildPlaceholder();
+      note.innerHTML = 'Model file not found yet. Once ready, upload it to:<br><code>'+entry.file+'</code>';
+      note.style.display = 'block';
+    }
+  );
+}
+
+/* ---------------------------------------------------------
+   4. UI WIRING
+----------------------------------------------------------*/
+const select = document.getElementById('modelSelect');
+BIO_MODELS.forEach((m,i)=>{
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = m.name;
+  select.appendChild(opt);
+});
+
+function selectModel(entry){
+  document.getElementById('nameBadge').textContent = entry.name;
+  document.getElementById('tagBadge').textContent = entry.tag;
+  document.getElementById('descText').textContent = entry.desc;
+  document.getElementById('statSubject').textContent = entry.tag.split('·')[0].trim();
+  document.getElementById('statGrade').textContent = entry.grade;
+  document.getElementById('sourceNote').textContent = entry.type === 'procedural'
+    ? 'Procedurally generated in code — no file to upload.'
+    : 'Loads: ' + entry.file;
+  loadModel(entry);
+}
+
+select.addEventListener('change', ()=>{
+  selectModel(BIO_MODELS[parseInt(select.value)]);
+});
+
+let rotateSpeedMult = 1;
+document.getElementById('speedRange').addEventListener('input', e=>{
+  rotateSpeedMult = parseFloat(e.target.value);
+});
+
+let autoRotate = true;
+document.getElementById('autoRotate').addEventListener('change', e=>{
+  autoRotate = e.target.checked;
+});
+
+selectModel(BIO_MODELS[0]);
+
+/* ---------------------------------------------------------
+   5. ANIMATION LOOP
+----------------------------------------------------------*/
+function animate(){
+  requestAnimationFrame(animate);
+  const elapsed = clock.getElapsedTime();
+  if(spinning) modelGroup.rotation.y += 0.006 * rotateSpeedMult;
+  if(currentUpdate) currentUpdate(elapsed);
+
+  if(autoRotate && !isDragging){
+    camTheta += 0.0018;
+    updateCamera();
+  }
+
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+<script>document.getElementById('navToggle').addEventListener('click', ()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+});</script>
+</body>
+</html>
