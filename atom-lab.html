@@ -92,6 +92,7 @@ body.lab-tool-page{display:flex; flex-direction:column; height:100vh; overflow:h
   <div class="nav-links" id="navLinks">
     <a href="index.html#subjects" class="">Subjects</a>
 <a href="3d-lab.html" class="">3D Lab</a>
+<a href="periodic-table.html" class="">Periodic Table</a>
 <a href="pricing.html" class="">Pricing</a>
 <a href="about.html" class="">About</a>
 <a href="blog.html" class="">Blog</a>
@@ -123,14 +124,6 @@ body.lab-tool-page{display:flex; flex-direction:column; height:100vh; overflow:h
       <div class="stat"><div class="k">Shells</div><div class="v" id="statS">1</div></div>
     </div>
 
-    <label>Electronic configuration</label>
-    <div id="econfigLine" style="font-family:'IBM Plex Mono',monospace; font-size:14px; color:var(--text); background:#0d1117; border:1px solid var(--line); border-radius:6px; padding:8px 10px;">2, 8, 1</div>
-
-    <div class="grid" style="grid-template-columns:1fr 1fr;">
-      <div class="stat"><div class="k">Valency</div><div class="v" id="statValency">1</div></div>
-      <div class="stat"><div class="k">Valence e⁻</div><div class="v" id="statValenceE">1</div></div>
-    </div>
-
     <label>Shell configuration</label>
     <div id="shellList"></div>
 
@@ -145,9 +138,7 @@ body.lab-tool-page{display:flex; flex-direction:column; height:100vh; overflow:h
     <div class="hint">
       Drag to rotate · scroll to zoom · shells and electron counts follow the
       2n² filling rule (capped for real element configurations up to Z=30,
-      plus a few heavier reference elements). Valency uses the simplified
-      octet rule (outer shell electrons if ≤4, else 8 minus outer shell
-      electrons) — a Class 9-10 teaching approximation, not full oxidation-state chemistry.
+      plus a few heavier reference elements).
     </div>
   </div>
 </div>
@@ -313,16 +304,6 @@ function packNucleonsInVolume(n, packRadius, nucleonRadius){
   return pts;
 }
 
-// Simplified octet-rule valency: an outer shell of <=4 electrons gives up that many
-// (valency = outer electrons); an outer shell of >4 needs that many more to complete
-// the octet (valency = 8 - outer electrons). This is the rule taught at Class 9-10 level
-// and is a teaching approximation, not a substitute for real oxidation-state chemistry.
-function computeValency(shells){
-  const outer = shells[shells.length-1];
-  if(outer <= 4) return outer;
-  return 8 - outer;
-}
-
 function buildAtom(el){
   clearAtom();
 
@@ -332,7 +313,7 @@ function buildAtom(el){
 
   // nucleus radius scales gently with nucleon count (visual, not to scale) — kept compact
   const nucleonRadius = 0.17;
-  const packRadius = 0.2 + Math.cbrt(nucleons) * 0.2;
+  const packRadius = 0.32 + Math.cbrt(nucleons) * 0.3;
 
   // place all nucleons at unique spots throughout the nucleus volume, then randomly
   // label them proton/neutron — this guarantees no overlap and a filled-in look
@@ -363,7 +344,7 @@ function buildAtom(el){
   const glowMat = new THREE.MeshBasicMaterial({color:0xf45b69, transparent:true, opacity:0.05});
   atomGroup.add(new THREE.Mesh(glowGeo, glowMat));
   const wallGeo = new THREE.SphereGeometry(packRadius+0.5, 20, 20);
-  const wallMat = new THREE.MeshBasicMaterial({color:0xf45b69, transparent:true, opacity:0.1, wireframe:true});
+  const wallMat = new THREE.MeshBasicMaterial({color:0xf45b69, transparent:true, opacity:0.22, wireframe:true});
   atomGroup.add(new THREE.Mesh(wallGeo, wallMat));
 
   // shells: each shell = ring (torus) tilted differently + evenly spaced electrons
@@ -414,10 +395,6 @@ function buildAtom(el){
   document.getElementById('statN').textContent = neutrons;
   document.getElementById('statE').textContent = protons;
   document.getElementById('statS').textContent = el.shells.length;
-  document.getElementById('econfigLine').textContent = el.shells.join(', ');
-  const outerElectrons = el.shells[el.shells.length-1];
-  document.getElementById('statValenceE').textContent = outerElectrons;
-  document.getElementById('statValency').textContent = computeValency(el.shells);
 
   const shellList = document.getElementById('shellList');
   shellList.innerHTML = '';

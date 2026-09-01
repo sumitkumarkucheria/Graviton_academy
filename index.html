@@ -118,33 +118,20 @@
   .hero-stats{display:flex; gap:28px; font-family:var(--mono); font-size:13px; color:var(--ink-dim);}
   .hero-stats b{color:var(--ink); font-family:var(--display); font-size:20px; display:block; font-weight:600;}
 
-  .hero-atoms-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
-  .mini-hero{display:flex; flex-direction:column;}
   .hero-stage{
     position:relative; aspect-ratio:1/1; background:radial-gradient(circle at 50% 45%, #202c44 0%, #121824 70%);
-    border-radius:18px; border:1px solid var(--grid-line); overflow:hidden;
+    border-radius:24px; border:1px solid var(--grid-line); overflow:hidden;
   }
   .hero-stage canvas{width:100%; height:100%; cursor:grab;}
   .hero-stage canvas:active{cursor:grabbing;}
   .stage-label{
-    position:absolute; top:10px; left:12px; font-family:var(--mono); font-size:9.5px; color:var(--ink-faint);
-    letter-spacing:.06em; text-transform:uppercase;
+    position:absolute; top:16px; left:18px; font-family:var(--mono); font-size:11px; color:var(--ink-faint);
+    letter-spacing:.08em; text-transform:uppercase;
   }
   .stage-label span{color:var(--physics);}
   .stage-hint{
-    position:absolute; bottom:10px; left:12px; right:12px; font-family:var(--mono); font-size:9.5px; color:var(--ink-faint);
+    position:absolute; bottom:16px; left:18px; right:18px; font-family:var(--mono); font-size:11px; color:var(--ink-faint);
     display:flex; justify-content:space-between;
-  }
-  .mini-hero-info{
-    margin-top:10px; padding:10px 12px; background:var(--bg-panel); border:1px solid var(--grid-line);
-    border-radius:12px; display:flex; align-items:center; justify-content:space-between; gap:8px;
-  }
-  .mhi-name{font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--ink);}
-  .mhi-counts{font-family:var(--mono); font-size:11.5px; color:var(--ink-dim); display:flex; gap:8px; white-space:nowrap;}
-  .mhi-counts b{color:var(--ink); font-weight:700;}
-  @media(max-width:520px){
-    .hero-atoms-grid{grid-template-columns:1fr 1fr; gap:10px;}
-    .mhi-name{font-size:12px;} .mhi-counts{font-size:10px; gap:5px;}
   }
 
   /* ===== SECTION HEADERS ===== */
@@ -168,8 +155,6 @@
   .bay[data-subject="physics"] .bay-dot{background:var(--physics);}
   .bay[data-subject="chemistry"] .bay-dot{background:var(--chem);}
   .bay[data-subject="biology"] .bay-dot{background:var(--bio);}
-  .bay[data-subject="neet"] .bay-dot{background:var(--neet);}
-  .bay[data-subject="jee"] .bay-dot{background:var(--jee);}
   .bay-head h3{font-size:20px;}
   .bay-head .bay-sub{color:var(--ink-dim); font-size:14px; font-family:var(--body); margin-top:2px;}
   .bay-chevron{color:var(--ink-faint); font-size:18px; transition:transform .25s ease;}
@@ -185,8 +170,6 @@
   .bay[data-subject="physics"] .grade-tab.active{background:var(--physics);}
   .bay[data-subject="chemistry"] .grade-tab.active{background:var(--chem);}
   .bay[data-subject="biology"] .grade-tab.active{background:var(--bio);}
-  .bay[data-subject="neet"] .grade-tab.active{background:var(--neet); color:#0A0E14;}
-  .bay[data-subject="jee"] .grade-tab.active{background:var(--jee); color:#0A0E14;}
   .topic-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px;}
   .topic-card{
     background:var(--bg-panel-2); border:1px solid var(--grid-line); border-radius:10px; padding:14px 16px;
@@ -219,15 +202,8 @@
   .lab-card[data-lab="atom"] .lab-switcher button.active{background:var(--physics);}
   .lab-card[data-lab="molecule"] .lab-switcher button.active{background:var(--chem);}
   .lab-card[data-lab="dna"] .lab-switcher button.active{background:var(--bio);}
-  .lab-open-btn{
-    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
-    padding:13px 16px; border-radius:10px; margin-bottom:16px; border:none; text-decoration:none;
-    font-family:var(--display); font-weight:600; font-size:15px; color:#0A0E14;
-  }
-  .lab-open-btn:hover{filter:brightness(1.08);}
-  .lab-card[data-lab="atom"] .lab-open-btn{background:var(--physics);}
-  .lab-card[data-lab="molecule"] .lab-open-btn{background:var(--chem);}
-  .lab-card[data-lab="dna"] .lab-open-btn{background:var(--bio);}
+  .lab-open-link{display:inline-block; margin-top:14px; font-family:var(--mono); font-size:12px; color:var(--ink-dim); border-top:1px solid var(--grid-line); padding-top:14px; width:100%;}
+  .lab-open-link:hover{color:var(--gold);}
 
   /* ===== WHY 3D ===== */
   .why-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--grid-line); border:1px solid var(--grid-line); border-radius:var(--radius); overflow:hidden;}
@@ -263,11 +239,9 @@
   /* ===== GRADE PICKER ===== */
   .grade-picker{padding:8px 0 44px;}
   .grade-picker-label{font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); text-align:center; margin-bottom:16px;}
-  .grade-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  .grade-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
   @media(max-width:900px){ .grade-grid{grid-template-columns:repeat(2,1fr);} }
   @media(max-width:520px){ .grade-grid{grid-template-columns:1fr;} }
-  .grade-grid.exam-grid{grid-template-columns:repeat(2,1fr); margin-top:16px;}
-  @media(max-width:520px){ .grade-grid.exam-grid{grid-template-columns:1fr;} }
   .grade-card{
     position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
     padding:34px 20px 28px; border-radius:20px; border:1.5px solid var(--grid-line); background:var(--bg-panel);
@@ -285,10 +259,10 @@
   .grade-card[data-accent="bio"] .grade-num{color:var(--bio);}
   .grade-card[data-accent="neet"]{border-color:rgba(76,217,113,0.35);}
   .grade-card[data-accent="neet"]:hover{border-color:var(--neet);}
-  .grade-card[data-accent="neet"] .grade-num{color:var(--neet); font-size:32px;}
+  .grade-card[data-accent="neet"] .grade-num{color:var(--neet);}
   .grade-card[data-accent="jee"]{border-color:rgba(199,146,255,0.35);}
   .grade-card[data-accent="jee"]:hover{border-color:var(--jee);}
-  .grade-card[data-accent="jee"] .grade-num{color:var(--jee); font-size:32px;}
+  .grade-card[data-accent="jee"] .grade-num{color:var(--jee);}
   .grade-card[data-accent="gold"]{border-color:var(--gold); background:linear-gradient(180deg, rgba(232,183,91,0.1), var(--bg-panel));}
   .grade-card[data-accent="gold"] .grade-num{color:var(--gold);}
   .grade-card.featured{transform:scale(1.04);}
@@ -329,6 +303,7 @@
     <div class="nav-links" id="navLinks">
       <a href="#subjects">Subjects</a>
       <a href="3d-lab.html">3D Lab</a>
+      <a href="periodic-table.html">Periodic Table</a>
       <a href="previous-year-papers.html">Previous Papers</a>
       <a href="pricing.html">Pricing</a>
       <a href="about.html">About</a>
@@ -357,51 +332,10 @@
         <div><b>25+</b>interactive units</div>
       </div>
     </div>
-    <div class="hero-atoms-grid">
-      <div class="mini-hero">
-        <div class="hero-stage">
-          <div class="stage-label">Live model · <span>Drag to rotate</span></div>
-          <canvas id="heroCanvas1"></canvas>
-          <div class="stage-hint"><span>Bohr model</span><span>Auto-rotating</span></div>
-        </div>
-        <div class="mini-hero-info">
-          <span class="mhi-name">Hydrogen (H)</span>
-          <span class="mhi-counts"><b>1</b>p <b>0</b>n <b>1</b>e⁻</span>
-        </div>
-      </div>
-      <div class="mini-hero">
-        <div class="hero-stage">
-          <div class="stage-label">Live model · <span>Drag to rotate</span></div>
-          <canvas id="heroCanvas2"></canvas>
-          <div class="stage-hint"><span>Bohr model</span><span>Auto-rotating</span></div>
-        </div>
-        <div class="mini-hero-info">
-          <span class="mhi-name">Carbon (C)</span>
-          <span class="mhi-counts"><b>6</b>p <b>6</b>n <b>6</b>e⁻</span>
-        </div>
-      </div>
-      <div class="mini-hero">
-        <div class="hero-stage">
-          <div class="stage-label">Live model · <span>Drag to rotate</span></div>
-          <canvas id="heroCanvas3"></canvas>
-          <div class="stage-hint"><span>Bohr model</span><span>Auto-rotating</span></div>
-        </div>
-        <div class="mini-hero-info">
-          <span class="mhi-name">Oxygen (O)</span>
-          <span class="mhi-counts"><b>8</b>p <b>8</b>n <b>8</b>e⁻</span>
-        </div>
-      </div>
-      <div class="mini-hero">
-        <div class="hero-stage">
-          <div class="stage-label">Live model · <span>Drag to rotate</span></div>
-          <canvas id="heroCanvas4"></canvas>
-          <div class="stage-hint"><span>Bohr model</span><span>Auto-rotating</span></div>
-        </div>
-        <div class="mini-hero-info">
-          <span class="mhi-name">Sodium (Na)</span>
-          <span class="mhi-counts"><b>11</b>p <b>12</b>n <b>11</b>e⁻</span>
-        </div>
-      </div>
+    <div class="hero-stage">
+      <div class="stage-label">Live model · <span>Carbon atom, drag to rotate</span></div>
+      <canvas id="heroCanvas"></canvas>
+      <div class="stage-hint"><span>Bohr model</span><span>Auto-rotating</span></div>
     </div>
   </section>
 
@@ -429,176 +363,16 @@
         <span class="grade-label">Class 12</span>
         <span class="grade-sub">Board-year syllabus</span>
       </a>
-    </div>
-    <div class="grade-grid exam-grid">
-      <a class="grade-card" data-accent="neet" href="#bay-neet" onclick="openBay('neet'); return false;">
-        <span class="grade-num">UG</span>
+      <a class="grade-card" data-accent="neet" href="neet.html">
+        <span class="grade-num">N</span>
         <span class="grade-label">NEET</span>
-        <span class="grade-sub">Physics, Chemistry &amp; Biology — medical entrance</span>
+        <span class="grade-sub">Medical entrance syllabus</span>
       </a>
-      <a class="grade-card" data-accent="jee" href="#bay-jee" onclick="openBay('jee'); return false;">
-        <span class="grade-num">JEE</span>
+      <a class="grade-card" data-accent="jee" href="jee.html">
+        <span class="grade-num">J</span>
         <span class="grade-label">IIT-JEE</span>
-        <span class="grade-sub">Physics, Chemistry &amp; Maths — engineering entrance</span>
+        <span class="grade-sub">Engineering entrance syllabus</span>
       </a>
-    </div>
-  </section>
-
-  <section id="exam-tracks" class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">Competitive exams</p>
-      <h2>NEET &amp; IIT-JEE tracks</h2>
-      <p>Same 3D model library, organized by subject instead of grade — built for NEET (UG) and IIT-JEE (Main) aspirants.</p>
-    </div>
-    <div class="bays">
-
-      <div class="bay" data-subject="neet" id="bay-neet">
-        <div class="bay-head" onclick="toggleBay(this)">
-          <div class="bay-head-left">
-            <span class="bay-dot"></span>
-            <div><h3>NEET (UG)</h3><div class="bay-sub">Physics, Chemistry & Biology for medical entrance — NCERT Class 11 & 12</div></div>
-          </div>
-          <span class="bay-chevron">⌄</span>
-        </div>
-        <div class="bay-body">
-          <div class="bay-inner">
-            <div class="grade-tabs">
-              <button class="grade-tab active" data-grade="phy" onclick="switchGrade(this,'neet')">Physics</button>
-              <button class="grade-tab" data-grade="chem" onclick="switchGrade(this,'neet')">Chemistry</button>
-              <button class="grade-tab" data-grade="bio" onclick="switchGrade(this,'neet')">Biology</button>
-            </div>
-            <div class="topic-grid" data-subject-grid="neet">
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Physical%20World%20%26%20Units&code=NEET%20PHY%201" data-grade="phy"><span class="tc-code">NEET PHY 1</span>Physical World & Units</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Kinematics&code=NEET%20PHY%202" data-grade="phy"><span class="tc-code">NEET PHY 2</span>Kinematics</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Laws%20of%20Motion&code=NEET%20PHY%203" data-grade="phy"><span class="tc-code">NEET PHY 3</span>Laws of Motion</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Work%2C%20Energy%20%26%20Power&code=NEET%20PHY%204" data-grade="phy"><span class="tc-code">NEET PHY 4</span>Work, Energy & Power</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Rotational%20Motion&code=NEET%20PHY%205" data-grade="phy"><span class="tc-code">NEET PHY 5</span>Rotational Motion</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Gravitation&code=NEET%20PHY%206" data-grade="phy"><span class="tc-code">NEET PHY 6</span>Gravitation</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Mechanical%20Properties%20of%20Matter&code=NEET%20PHY%207" data-grade="phy"><span class="tc-code">NEET PHY 7</span>Mechanical Properties of Matter</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Thermodynamics&code=NEET%20PHY%208" data-grade="phy"><span class="tc-code">NEET PHY 8</span>Thermodynamics</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Kinetic%20Theory%20of%20Gases&code=NEET%20PHY%209" data-grade="phy"><span class="tc-code">NEET PHY 9</span>Kinetic Theory of Gases</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Oscillations%20%26%20Waves&code=NEET%20PHY%2010" data-grade="phy"><span class="tc-code">NEET PHY 10</span>Oscillations & Waves</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Electrostatics&code=NEET%20PHY%2011" data-grade="phy"><span class="tc-code">NEET PHY 11</span>Electrostatics</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Current%20Electricity&code=NEET%20PHY%2012" data-grade="phy"><span class="tc-code">NEET PHY 12</span>Current Electricity</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Magnetism%20%26%20Matter&code=NEET%20PHY%2013" data-grade="phy"><span class="tc-code">NEET PHY 13</span>Magnetism & Matter</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Electromagnetic%20Induction%20%26%20AC&code=NEET%20PHY%2014" data-grade="phy"><span class="tc-code">NEET PHY 14</span>Electromagnetic Induction & AC</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Ray%20%26%20Wave%20Optics&code=NEET%20PHY%2015" data-grade="phy"><span class="tc-code">NEET PHY 15</span>Ray & Wave Optics</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Dual%20Nature%20of%20Matter&code=NEET%20PHY%2016" data-grade="phy"><span class="tc-code">NEET PHY 16</span>Dual Nature of Matter</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Atoms%20%26%20Nuclei&code=NEET%20PHY%2017" data-grade="phy"><span class="tc-code">NEET PHY 17</span>Atoms & Nuclei</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Semiconductor%20Electronics&code=NEET%20PHY%2018" data-grade="phy"><span class="tc-code">NEET PHY 18</span>Semiconductor Electronics</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Basic%20Concepts%20of%20Chemistry&code=NEET%20CHM%201" data-grade="chem"><span class="tc-code">NEET CHM 1</span>Basic Concepts of Chemistry</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Structure%20of%20Atom&code=NEET%20CHM%202" data-grade="chem"><span class="tc-code">NEET CHM 2</span>Structure of Atom</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Chemical%20Bonding&code=NEET%20CHM%203" data-grade="chem"><span class="tc-code">NEET CHM 3</span>Chemical Bonding</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=States%20of%20Matter&code=NEET%20CHM%204" data-grade="chem"><span class="tc-code">NEET CHM 4</span>States of Matter</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Thermodynamics&code=NEET%20CHM%205" data-grade="chem"><span class="tc-code">NEET CHM 5</span>Thermodynamics</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Equilibrium&code=NEET%20CHM%206" data-grade="chem"><span class="tc-code">NEET CHM 6</span>Equilibrium</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Redox%20Reactions&code=NEET%20CHM%207" data-grade="chem"><span class="tc-code">NEET CHM 7</span>Redox Reactions</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Periodic%20Classification&code=NEET%20CHM%208" data-grade="chem"><span class="tc-code">NEET CHM 8</span>Periodic Classification</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=p-Block%20Elements&code=NEET%20CHM%209" data-grade="chem"><span class="tc-code">NEET CHM 9</span>p-Block Elements</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=d%20%26%20f-Block%20Elements&code=NEET%20CHM%2010" data-grade="chem"><span class="tc-code">NEET CHM 10</span>d & f-Block Elements</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Coordination%20Compounds&code=NEET%20CHM%2011" data-grade="chem"><span class="tc-code">NEET CHM 11</span>Coordination Compounds</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Organic%20Chemistry%20%E2%80%94%20Basic%20Principles&code=NEET%20CHM%2012" data-grade="chem"><span class="tc-code">NEET CHM 12</span>Organic Chemistry — Basic Principles</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Hydrocarbons&code=NEET%20CHM%2013" data-grade="chem"><span class="tc-code">NEET CHM 13</span>Hydrocarbons</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Haloalkanes%20%26%20Haloarenes&code=NEET%20CHM%2014" data-grade="chem"><span class="tc-code">NEET CHM 14</span>Haloalkanes & Haloarenes</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Alcohols%2C%20Phenols%20%26%20Ethers&code=NEET%20CHM%2015" data-grade="chem"><span class="tc-code">NEET CHM 15</span>Alcohols, Phenols & Ethers</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Aldehydes%2C%20Ketones%20%26%20Carboxylic%20Acids&code=NEET%20CHM%2016" data-grade="chem"><span class="tc-code">NEET CHM 16</span>Aldehydes, Ketones & Carboxylic Acids</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Amines&code=NEET%20CHM%2017" data-grade="chem"><span class="tc-code">NEET CHM 17</span>Amines</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Biomolecules%20%26%20Polymers&code=NEET%20CHM%2018" data-grade="chem"><span class="tc-code">NEET CHM 18</span>Biomolecules & Polymers</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Diversity%20in%20Living%20World&code=NEET%20BIO%201" data-grade="bio"><span class="tc-code">NEET BIO 1</span>Diversity in Living World</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Cell%20%E2%80%94%20The%20Unit%20of%20Life&code=NEET%20BIO%202" data-grade="bio"><span class="tc-code">NEET BIO 2</span>Cell — The Unit of Life</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Cell%20Division&code=NEET%20BIO%203" data-grade="bio"><span class="tc-code">NEET BIO 3</span>Cell Division</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Plant%20Physiology&code=NEET%20BIO%204" data-grade="bio"><span class="tc-code">NEET BIO 4</span>Plant Physiology</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Human%20Physiology%20%E2%80%94%20Digestion%20%26%20Respiration&code=NEET%20BIO%205" data-grade="bio"><span class="tc-code">NEET BIO 5</span>Human Physiology — Digestion & Respiration</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Human%20Physiology%20%E2%80%94%20Circulation%20%26%20Excretion&code=NEET%20BIO%206" data-grade="bio"><span class="tc-code">NEET BIO 6</span>Human Physiology — Circulation & Excretion</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Neural%20%26%20Hormonal%20Control&code=NEET%20BIO%207" data-grade="bio"><span class="tc-code">NEET BIO 7</span>Neural & Hormonal Control</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Reproduction%20in%20Organisms&code=NEET%20BIO%208" data-grade="bio"><span class="tc-code">NEET BIO 8</span>Reproduction in Organisms</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Human%20Reproduction&code=NEET%20BIO%209" data-grade="bio"><span class="tc-code">NEET BIO 9</span>Human Reproduction</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Genetics%20%26%20Inheritance&code=NEET%20BIO%2010" data-grade="bio"><span class="tc-code">NEET BIO 10</span>Genetics & Inheritance</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Molecular%20Basis%20of%20Inheritance&code=NEET%20BIO%2011" data-grade="bio"><span class="tc-code">NEET BIO 11</span>Molecular Basis of Inheritance</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Evolution&code=NEET%20BIO%2012" data-grade="bio"><span class="tc-code">NEET BIO 12</span>Evolution</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Human%20Health%20%26%20Disease&code=NEET%20BIO%2013" data-grade="bio"><span class="tc-code">NEET BIO 13</span>Human Health & Disease</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Biotechnology%20%E2%80%94%20Principles%20%26%20Processes&code=NEET%20BIO%2014" data-grade="bio"><span class="tc-code">NEET BIO 14</span>Biotechnology — Principles & Processes</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Organisms%20%26%20Populations&code=NEET%20BIO%2015" data-grade="bio"><span class="tc-code">NEET BIO 15</span>Organisms & Populations</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Ecosystem&code=NEET%20BIO%2016" data-grade="bio"><span class="tc-code">NEET BIO 16</span>Ecosystem</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Biodiversity%20%26%20Conservation&code=NEET%20BIO%2017" data-grade="bio"><span class="tc-code">NEET BIO 17</span>Biodiversity & Conservation</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bay" data-subject="jee" id="bay-jee">
-        <div class="bay-head" onclick="toggleBay(this)">
-          <div class="bay-head-left">
-            <span class="bay-dot"></span>
-            <div><h3>IIT-JEE (Main)</h3><div class="bay-sub">Physics, Chemistry & Maths for engineering entrance — NCERT Class 11 & 12</div></div>
-          </div>
-          <span class="bay-chevron">⌄</span>
-        </div>
-        <div class="bay-body">
-          <div class="bay-inner">
-            <div class="grade-tabs">
-              <button class="grade-tab active" data-grade="phy" onclick="switchGrade(this,'jee')">Physics</button>
-              <button class="grade-tab" data-grade="chem" onclick="switchGrade(this,'jee')">Chemistry</button>
-              <button class="grade-tab" data-grade="maths" onclick="switchGrade(this,'jee')">Maths</button>
-            </div>
-            <div class="topic-grid" data-subject-grid="jee">
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Units%2C%20Dimensions%20%26%20Vectors&code=JEE%20PHY%201" data-grade="phy"><span class="tc-code">JEE PHY 1</span>Units, Dimensions & Vectors</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Kinematics&code=JEE%20PHY%202" data-grade="phy"><span class="tc-code">JEE PHY 2</span>Kinematics</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Laws%20of%20Motion&code=JEE%20PHY%203" data-grade="phy"><span class="tc-code">JEE PHY 3</span>Laws of Motion</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Work%2C%20Energy%20%26%20Power&code=JEE%20PHY%204" data-grade="phy"><span class="tc-code">JEE PHY 4</span>Work, Energy & Power</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Rotational%20Motion&code=JEE%20PHY%205" data-grade="phy"><span class="tc-code">JEE PHY 5</span>Rotational Motion</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Gravitation&code=JEE%20PHY%206" data-grade="phy"><span class="tc-code">JEE PHY 6</span>Gravitation</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Mechanical%20Properties%20of%20Solids%20%26%20Fluids&code=JEE%20PHY%207" data-grade="phy"><span class="tc-code">JEE PHY 7</span>Mechanical Properties of Solids & Fluids</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Thermodynamics&code=JEE%20PHY%208" data-grade="phy"><span class="tc-code">JEE PHY 8</span>Thermodynamics</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Kinetic%20Theory%20of%20Gases&code=JEE%20PHY%209" data-grade="phy"><span class="tc-code">JEE PHY 9</span>Kinetic Theory of Gases</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Oscillations&code=JEE%20PHY%2010" data-grade="phy"><span class="tc-code">JEE PHY 10</span>Oscillations</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Waves&code=JEE%20PHY%2011" data-grade="phy"><span class="tc-code">JEE PHY 11</span>Waves</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Electrostatics&code=JEE%20PHY%2012" data-grade="phy"><span class="tc-code">JEE PHY 12</span>Electrostatics</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Current%20Electricity&code=JEE%20PHY%2013" data-grade="phy"><span class="tc-code">JEE PHY 13</span>Current Electricity</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Magnetic%20Effects%20of%20Current%20%26%20Magnetism&code=JEE%20PHY%2014" data-grade="phy"><span class="tc-code">JEE PHY 14</span>Magnetic Effects of Current & Magnetism</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Electromagnetic%20Induction%20%26%20AC&code=JEE%20PHY%2015" data-grade="phy"><span class="tc-code">JEE PHY 15</span>Electromagnetic Induction & AC</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Electromagnetic%20Waves&code=JEE%20PHY%2016" data-grade="phy"><span class="tc-code">JEE PHY 16</span>Electromagnetic Waves</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Ray%20%26%20Wave%20Optics&code=JEE%20PHY%2017" data-grade="phy"><span class="tc-code">JEE PHY 17</span>Ray & Wave Optics</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Dual%20Nature%20of%20Radiation%20%26%20Matter&code=JEE%20PHY%2018" data-grade="phy"><span class="tc-code">JEE PHY 18</span>Dual Nature of Radiation & Matter</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Atoms%20%26%20Nuclei&code=JEE%20PHY%2019" data-grade="phy"><span class="tc-code">JEE PHY 19</span>Atoms & Nuclei</a>
-              <a class="topic-card show" href="topic-coming-soon.html?topic=Semiconductor%20Electronics&code=JEE%20PHY%2020" data-grade="phy"><span class="tc-code">JEE PHY 20</span>Semiconductor Electronics</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Mole%20Concept%20%26%20Stoichiometry&code=JEE%20CHM%201" data-grade="chem"><span class="tc-code">JEE CHM 1</span>Mole Concept & Stoichiometry</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Atomic%20Structure&code=JEE%20CHM%202" data-grade="chem"><span class="tc-code">JEE CHM 2</span>Atomic Structure</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Chemical%20Bonding&code=JEE%20CHM%203" data-grade="chem"><span class="tc-code">JEE CHM 3</span>Chemical Bonding</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Thermodynamics&code=JEE%20CHM%204" data-grade="chem"><span class="tc-code">JEE CHM 4</span>Thermodynamics</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Chemical%20%26%20Ionic%20Equilibrium&code=JEE%20CHM%205" data-grade="chem"><span class="tc-code">JEE CHM 5</span>Chemical & Ionic Equilibrium</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Redox%20%26%20Electrochemistry&code=JEE%20CHM%206" data-grade="chem"><span class="tc-code">JEE CHM 6</span>Redox & Electrochemistry</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Chemical%20Kinetics&code=JEE%20CHM%207" data-grade="chem"><span class="tc-code">JEE CHM 7</span>Chemical Kinetics</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Periodicity%20%26%20p-Block%20Elements&code=JEE%20CHM%208" data-grade="chem"><span class="tc-code">JEE CHM 8</span>Periodicity & p-Block Elements</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=d%20%26%20f-Block%20Elements&code=JEE%20CHM%209" data-grade="chem"><span class="tc-code">JEE CHM 9</span>d & f-Block Elements</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Coordination%20Compounds&code=JEE%20CHM%2010" data-grade="chem"><span class="tc-code">JEE CHM 10</span>Coordination Compounds</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=General%20Organic%20Chemistry&code=JEE%20CHM%2011" data-grade="chem"><span class="tc-code">JEE CHM 11</span>General Organic Chemistry</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Hydrocarbons&code=JEE%20CHM%2012" data-grade="chem"><span class="tc-code">JEE CHM 12</span>Hydrocarbons</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Haloalkanes%20%26%20Haloarenes&code=JEE%20CHM%2013" data-grade="chem"><span class="tc-code">JEE CHM 13</span>Haloalkanes & Haloarenes</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Alcohols%2C%20Phenols%20%26%20Ethers&code=JEE%20CHM%2014" data-grade="chem"><span class="tc-code">JEE CHM 14</span>Alcohols, Phenols & Ethers</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Aldehydes%2C%20Ketones%20%26%20Carboxylic%20Acids&code=JEE%20CHM%2015" data-grade="chem"><span class="tc-code">JEE CHM 15</span>Aldehydes, Ketones & Carboxylic Acids</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Amines&code=JEE%20CHM%2016" data-grade="chem"><span class="tc-code">JEE CHM 16</span>Amines</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Biomolecules%20%26%20Polymers&code=JEE%20CHM%2017" data-grade="chem"><span class="tc-code">JEE CHM 17</span>Biomolecules & Polymers</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Practical%20%26%20Environmental%20Chemistry&code=JEE%20CHM%2018" data-grade="chem"><span class="tc-code">JEE CHM 18</span>Practical & Environmental Chemistry</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Sets%2C%20Relations%20%26%20Functions&code=JEE%20MATH%201" data-grade="maths"><span class="tc-code">JEE MATH 1</span>Sets, Relations & Functions</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Complex%20Numbers%20%26%20Quadratic%20Equations&code=JEE%20MATH%202" data-grade="maths"><span class="tc-code">JEE MATH 2</span>Complex Numbers & Quadratic Equations</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Matrices%20%26%20Determinants&code=JEE%20MATH%203" data-grade="maths"><span class="tc-code">JEE MATH 3</span>Matrices & Determinants</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Permutations%20%26%20Combinations&code=JEE%20MATH%204" data-grade="maths"><span class="tc-code">JEE MATH 4</span>Permutations & Combinations</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Binomial%20Theorem%20%26%20Sequences&code=JEE%20MATH%205" data-grade="maths"><span class="tc-code">JEE MATH 5</span>Binomial Theorem & Sequences</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Limits%2C%20Continuity%20%26%20Differentiability&code=JEE%20MATH%206" data-grade="maths"><span class="tc-code">JEE MATH 6</span>Limits, Continuity & Differentiability</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Integral%20Calculus&code=JEE%20MATH%207" data-grade="maths"><span class="tc-code">JEE MATH 7</span>Integral Calculus</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Differential%20Equations&code=JEE%20MATH%208" data-grade="maths"><span class="tc-code">JEE MATH 8</span>Differential Equations</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Coordinate%20Geometry%20%E2%80%94%20Lines%20%26%20Circles&code=JEE%20MATH%209" data-grade="maths"><span class="tc-code">JEE MATH 9</span>Coordinate Geometry — Lines & Circles</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Conic%20Sections&code=JEE%20MATH%2010" data-grade="maths"><span class="tc-code">JEE MATH 10</span>Conic Sections</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=3D%20Geometry&code=JEE%20MATH%2011" data-grade="maths"><span class="tc-code">JEE MATH 11</span>3D Geometry</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Vector%20Algebra&code=JEE%20MATH%2012" data-grade="maths"><span class="tc-code">JEE MATH 12</span>Vector Algebra</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Statistics%20%26%20Probability&code=JEE%20MATH%2013" data-grade="maths"><span class="tc-code">JEE MATH 13</span>Statistics & Probability</a>
-              <a class="topic-card" href="topic-coming-soon.html?topic=Trigonometry&code=JEE%20MATH%2014" data-grade="maths"><span class="tc-code">JEE MATH 14</span>Trigonometry</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   </section>
 
@@ -737,7 +511,6 @@
         </div>
       </div>
 
-
     </div>
   </section>
 
@@ -753,7 +526,6 @@
         <div class="lab-canvas-wrap"><canvas id="atomCanvas"></canvas></div>
         <div class="lab-card-body">
           <h3>Atom Explorer</h3>
-          <a href="atom-lab.html" class="lab-open-btn">Open full Atom Lab →</a>
           <p>Compare electron shells across elements — Physics, Grade 12.</p>
           <div class="lab-switcher">
             <button class="active" data-el="H">Hydrogen</button>
@@ -762,6 +534,7 @@
             <button data-el="O">Oxygen</button>
             <button data-el="Na">Sodium</button>
           </div>
+          <a href="atom-lab.html" class="lab-open-link">Open full Atom Lab →</a>
         </div>
       </div>
 
@@ -769,7 +542,6 @@
         <div class="lab-canvas-wrap"><canvas id="moleculeCanvas"></canvas></div>
         <div class="lab-card-body">
           <h3>Molecule Builder</h3>
-          <a href="molecule-lab.html" class="lab-open-btn">Open full Molecule Lab →</a>
           <p>See real bond geometry, not flat diagrams — Chemistry, Grade 11.</p>
           <div class="lab-switcher">
             <button class="active" data-mol="H2O">H₂O</button>
@@ -777,6 +549,7 @@
             <button data-mol="CO2">CO₂</button>
             <button data-mol="NH3">NH₃</button>
           </div>
+          <a href="molecule-lab.html" class="lab-open-link">Open full Molecule Lab →</a>
         </div>
       </div>
 
@@ -784,7 +557,6 @@
         <div class="lab-canvas-wrap"><canvas id="dnaCanvas"></canvas></div>
         <div class="lab-card-body">
           <h3>DNA Double Helix</h3>
-          <a href="biology-lab.html" class="lab-open-btn">Open full Biology Lab →</a>
           <p>Trace the sugar-phosphate backbone and base pairs — Biology, Grade 12.</p>
           <div class="lab-switcher">
             <button class="active" data-speed="slow">Slow spin</button>
@@ -989,14 +761,9 @@
     return renderer;
   }
 
-  // ================= HERO: 4 mini Bohr atoms =================
-  // Reusable builder — takes a canvas id + {protons, neutrons, shells} and runs its
-  // own independent scene/camera/render loop. Called once per hero tile below.
-  // Only the first tile (canvasId 'heroCanvas1') checks MODEL_FILES.hero for a
-  // custom .glb; the other three are always the built-in procedural model.
-  function initMiniHeroAtom(canvasId, protons, neutrons, shellCounts, useCustomModelHook){
-    const canvas = document.getElementById(canvasId);
-    if(!canvas) return;
+  // ================= HERO: Bohr atom =================
+  (function(){
+    const canvas = document.getElementById('heroCanvas');
     const renderer = makeRenderer(canvas);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45,1,0.1,100);
@@ -1009,7 +776,22 @@
     const group = new THREE.Group(); scene.add(group);
 
     const shellColors=[0x5ec8f8,0x38D6C0,0xFF8A65];
+    const shellCounts=[2,4]; // carbon: 2,4
     let electronGroups=[];
+
+    function fibonacciSpherePoints(n, radius){
+      const pts=[];
+      const golden = Math.PI*(3-Math.sqrt(5));
+      for(let i=0;i<n;i++){
+        const y = 1 - (i/(Math.max(n-1,1)))*2;
+        const r = Math.sqrt(Math.max(0,1-y*y));
+        const theta = golden*i;
+        const x = Math.cos(theta)*r;
+        const z = Math.sin(theta)*r;
+        pts.push(new THREE.Vector3(x,y,z).multiplyScalar(radius));
+      }
+      return pts;
+    }
 
     // fills the nucleus VOLUME (not just its surface) with unique, non-overlapping spots
     function packNucleonsInVolume(n, packRadius, nucleonRadius){
@@ -1036,10 +818,10 @@
       return pts;
     }
 
-    // atom-lab-style nucleus: packed protons + neutrons, sized/scaled for this element
+    // atom-lab-style nucleus: packed protons + neutrons (carbon: 6 + 6)
     function buildProceduralHero(){
-      const nucleons = protons+neutrons;
-      const packRadius = 0.2 + Math.cbrt(Math.max(nucleons,1)) * 0.22;
+      const protons = 6, neutrons = 6, nucleons = protons+neutrons;
+      const packRadius = 0.3 + Math.cbrt(nucleons) * 0.32;
       const nucleonRadius = 0.16;
       const protonMat = new THREE.MeshStandardMaterial({color:0xf45b69, roughness:0.4, metalness:0.1});
       const neutronMat = new THREE.MeshStandardMaterial({color:0x4d5b73, roughness:0.5, metalness:0.1});
@@ -1063,7 +845,7 @@
       const glowMat = new THREE.MeshBasicMaterial({color:0xE8B75B, transparent:true, opacity:0.1});
       group.add(new THREE.Mesh(glowGeo, glowMat));
       const wallGeo = new THREE.SphereGeometry(packRadius+0.32, 20, 20);
-      const wallMat = new THREE.MeshBasicMaterial({color:0xE8B75B, transparent:true, opacity:0.12, wireframe:true});
+      const wallMat = new THREE.MeshBasicMaterial({color:0xE8B75B, transparent:true, opacity:0.28, wireframe:true});
       group.add(new THREE.Mesh(wallGeo, wallMat));
 
       const shellGap = 1.6, baseRadius = packRadius + 1.6;
@@ -1087,14 +869,10 @@
       });
     }
 
-    if(useCustomModelHook){
-      loadModelOrFallback(MODEL_FILES.hero, group, buildProceduralHero, ()=>{
-        const hint = canvas.closest('.mini-hero').querySelector('.stage-hint');
-        if(hint) hint.innerHTML = '<span>Custom model</span><span>Auto-rotating</span>';
-      });
-    } else {
-      buildProceduralHero();
-    }
+    loadModelOrFallback(MODEL_FILES.hero, group, buildProceduralHero, ()=>{
+      const hint = document.querySelector('.hero-stage .stage-hint');
+      if(hint) hint.innerHTML = '<span>Custom model</span><span>Auto-rotating</span>';
+    });
 
     const isDragging = attachDrag(canvas, group);
     let t=0;
@@ -1112,12 +890,7 @@
       requestAnimationFrame(animate);
     }
     animate();
-  }
-
-  initMiniHeroAtom('heroCanvas1', 1, 0, [1], true);     // Hydrogen
-  initMiniHeroAtom('heroCanvas2', 6, 6, [2,4], false);  // Carbon
-  initMiniHeroAtom('heroCanvas3', 8, 8, [2,6], false);  // Oxygen
-  initMiniHeroAtom('heroCanvas4', 11, 12, [2,8,1], false); // Sodium
+  })();
 
   // ================= LAB 1: Atom Explorer =================
   (function(){
@@ -1184,7 +957,7 @@
       group.clear(); electronGroups=[];
       const el = elements[sym];
       const protons = el.protons, neutrons = el.neutrons, nucleons = Math.max(protons+neutrons,1);
-      const packRadius = 0.2 + Math.cbrt(nucleons) * 0.22;
+      const packRadius = 0.3 + Math.cbrt(nucleons) * 0.32;
       const nucleonRadius = 0.16;
       const nucleonGeo = new THREE.SphereGeometry(nucleonRadius,16,16);
       const protonMat = new THREE.MeshStandardMaterial({color:0xf45b69, roughness:0.4, metalness:0.1});
@@ -1208,7 +981,7 @@
       const glowMat = new THREE.MeshBasicMaterial({color:0xf45b69, transparent:true, opacity:0.08});
       group.add(new THREE.Mesh(glowGeo, glowMat));
       const wallGeo = new THREE.SphereGeometry(packRadius+0.35, 20, 20);
-      const wallMat = new THREE.MeshBasicMaterial({color:0xf45b69, transparent:true, opacity:0.12, wireframe:true});
+      const wallMat = new THREE.MeshBasicMaterial({color:0xf45b69, transparent:true, opacity:0.25, wireframe:true});
       group.add(new THREE.Mesh(wallGeo, wallMat));
 
       const shellGap = 1.4, baseRadius = packRadius + 1.5;
@@ -1432,21 +1205,6 @@
       bay.classList.add('open');
       body.style.maxHeight = body.scrollHeight + 'px';
     }
-  }
-  // opens a bay by data-subject (always open, never toggles closed) and scrolls to it —
-  // used by the NEET/IIT-JEE cards under the grade picker
-  function openBay(subject){
-    const bay = document.querySelector('.bay[data-subject="'+subject+'"]');
-    if(!bay) return;
-    document.querySelectorAll('.bay').forEach(b=>{
-      b.classList.remove('open');
-      const bd = b.querySelector('.bay-body');
-      if(bd) bd.style.maxHeight = null;
-    });
-    bay.classList.add('open');
-    const body = bay.querySelector('.bay-body');
-    body.style.maxHeight = body.scrollHeight + 'px';
-    bay.scrollIntoView({behavior:'smooth', block:'start'});
   }
   // open physics bay by default
   document.addEventListener('DOMContentLoaded', ()=>{
