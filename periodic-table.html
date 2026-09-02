@@ -288,6 +288,31 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
     color:var(--ink-faint); border-radius:8px; border:1px dashed rgba(255,255,255,0.12); background:transparent; cursor:default;
   }
 
+  /* ===== trends section ===== */
+  .pt-trends-head{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin:56px 0 22px;}
+  .pt-trends-head .section-head{margin-bottom:0;}
+  .pt-trend-tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;}
+  .pt-trend-tab{
+    background:var(--bg-panel-2); border:1px solid var(--grid-line); color:var(--ink-dim); font-family:var(--mono);
+    font-size:12px; padding:8px 15px; border-radius:100px; cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .pt-trend-tab:hover{color:var(--ink); border-color:rgba(255,255,255,0.18);}
+  .pt-trend-tab.active{background:var(--gold); color:#151109; border-color:transparent;}
+  .pt-trend-scale{display:flex; align-items:center; gap:12px; margin-bottom:18px; font-family:var(--mono); font-size:11.5px; color:var(--ink-dim);}
+  .pt-trend-scale-bar{flex:1; max-width:320px; height:10px; border-radius:6px; background:linear-gradient(90deg,#1e3a5f,#38D6C0,#E8B75B,#F45B69);}
+  .pt-trend-grid{display:grid; grid-template-columns:repeat(18,minmax(50px,1fr)); grid-template-rows:repeat(10,minmax(50px,1fr)); gap:4px; min-width:1080px;}
+  .pt-trend-cell{
+    position:relative; border-radius:8px; border:1px solid rgba(255,255,255,0.08);
+    padding:5px 6px 4px; cursor:pointer; transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    display:flex; flex-direction:column; justify-content:flex-start; -webkit-tap-highlight-color:transparent; color:#0A0E14;
+  }
+  .pt-trend-cell:hover, .pt-trend-cell:focus-visible{transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.35); border-color:var(--gold); z-index:2;}
+  .pt-trend-cell .pt-num{font-family:var(--mono); font-size:9.5px; color:rgba(10,14,20,0.6);}
+  .pt-trend-cell .pt-sym{font-family:var(--display); font-weight:700; font-size:16px; line-height:1.05; margin-top:1px;}
+  .pt-trend-cell .pt-val{font-family:var(--mono); font-size:8.5px; margin-top:2px; opacity:.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pt-trend-cell.pt-no-data{background:var(--bg-panel-2) !important; color:var(--ink-faint) !important; cursor:default;}
+  .pt-trend-cell.pt-no-data:hover{transform:none; box-shadow:none; border-color:rgba(255,255,255,0.08);}
+
   /* ===== popup ===== */
   .pt-overlay{
     position:fixed; inset:0; background:rgba(5,7,10,0.6); backdrop-filter:blur(2px);
@@ -360,6 +385,19 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
     <div class="pt-legend" id="ptLegend"></div>
     <div class="pt-scroll">
       <div class="pt-grid" id="ptGrid"></div>
+    </div>
+
+    <div class="pt-trends-head">
+      <div class="section-head">
+        <span class="eyebrow">Trends</span>
+        <h2>Same 118 elements, colored by property.</h2>
+        <p>Pick a property — the table recolors from lowest to highest, so you can see the trend across a period or down a group at a glance. Tap a tile for the exact value.</p>
+      </div>
+    </div>
+    <div class="pt-trend-tabs" id="ptTrendTabs"></div>
+    <div class="pt-trend-scale" id="ptTrendScale"></div>
+    <div class="pt-scroll">
+      <div class="pt-trend-grid" id="ptTrendGrid"></div>
     </div>
   </section>
 </main>
@@ -519,6 +557,101 @@ function closeElementPopup(){
 document.getElementById('ptPopupClose').addEventListener('click', closeElementPopup);
 overlay.addEventListener('click', (ev)=>{ if(ev.target === overlay) closeElementPopup(); });
 document.addEventListener('keydown', (ev)=>{ if(ev.key === 'Escape') closeElementPopup(); });
+
+// ================= TRENDS =================
+const TREND_PROPS = [
+  { key:'AtomicMass',            label:'Atomic Mass',        unit:'u',        parse:v=>parseFloat(v) },
+  { key:'Electronegativity',     label:'Electronegativity',  unit:'(Pauling)',parse:v=>parseFloat(v) },
+  { key:'AtomicRadius',          label:'Atomic Radius',      unit:'pm',       parse:v=>parseFloat(v) },
+  { key:'IonizationEnergy',      label:'Ionization Energy',  unit:'eV',       parse:v=>parseFloat(v) },
+  { key:'ElectronAffinity',      label:'Electron Affinity',  unit:'eV',       parse:v=>parseFloat(v) },
+  { key:'MeltingPoint',          label:'Melting Point',      unit:'K',        parse:v=>parseFloat(v) },
+  { key:'BoilingPoint',          label:'Boiling Point',      unit:'K',        parse:v=>parseFloat(v) },
+  { key:'Density',               label:'Density',            unit:'g/cm³',    parse:v=>parseFloat(v) },
+];
+
+// low -> high color ramp (matches the scale bar gradient)
+const TREND_RAMP = [
+  [30, 58, 95],    // deep blue
+  [56, 214, 192],  // teal
+  [232, 183, 91],  // gold
+  [244, 91, 105],  // red
+];
+
+function trendColor(t){
+  // t in [0,1] across the 4-stop ramp
+  const n = TREND_RAMP.length - 1;
+  const seg = Math.min(Math.floor(t * n), n - 1);
+  const localT = (t * n) - seg;
+  const a = TREND_RAMP[seg], b = TREND_RAMP[seg+1];
+  const r = Math.round(a[0] + (b[0]-a[0])*localT);
+  const g = Math.round(a[1] + (b[1]-a[1])*localT);
+  const bl = Math.round(a[2] + (b[2]-a[2])*localT);
+  return `rgb(${r},${g},${bl})`;
+}
+
+const trendTabsEl = document.getElementById('ptTrendTabs');
+const trendScaleEl = document.getElementById('ptTrendScale');
+const trendGridEl = document.getElementById('ptTrendGrid');
+let activeTrend = TREND_PROPS[0].key;
+
+TREND_PROPS.forEach(p=>{
+  const btn = document.createElement('button');
+  btn.className = 'pt-trend-tab' + (p.key === activeTrend ? ' active' : '');
+  btn.textContent = p.label;
+  btn.dataset.key = p.key;
+  btn.addEventListener('click', ()=>{
+    activeTrend = p.key;
+    document.querySelectorAll('.pt-trend-tab').forEach(b=>b.classList.toggle('active', b.dataset.key === activeTrend));
+    renderTrendGrid();
+  });
+  trendTabsEl.appendChild(btn);
+});
+
+function renderTrendGrid(){
+  trendGridEl.innerHTML = '';
+  const prop = TREND_PROPS.find(p=>p.key===activeTrend);
+  const values = PT_ELEMENTS.map(e=>prop.parse(e[prop.key])).filter(v=>!isNaN(v) && v !== null);
+  const min = Math.min(...values), max = Math.max(...values);
+
+  trendScaleEl.innerHTML = `<span>${prop.label} — low (${min.toLocaleString()} ${prop.unit})</span><span class="pt-trend-scale-bar"></span><span>high (${max.toLocaleString()} ${prop.unit})</span>`;
+
+  for(let row=1; row<=10; row++){
+    if(row===8) continue;
+    for(let col=1; col<=18; col++){
+      const el = byPos[row+'-'+col];
+      const cell = document.createElement('div');
+      cell.style.gridRow = row;
+      cell.style.gridColumn = col;
+      if(el){
+        const raw = prop.parse(el[prop.key]);
+        const hasData = !isNaN(raw) && raw !== null;
+        cell.className = 'pt-trend-cell' + (hasData ? '' : ' pt-no-data');
+        cell.tabIndex = 0;
+        cell.setAttribute('role','button');
+        cell.setAttribute('aria-label', el.Name + (hasData ? (', ' + prop.label + ': ' + raw) : ', no data'));
+        if(hasData){
+          const t = max === min ? 0.5 : (raw - min) / (max - min);
+          cell.style.background = trendColor(t);
+          cell.innerHTML = '<span class="pt-num">'+el.AtomicNumber+'</span><span class="pt-sym">'+el.Symbol+'</span><span class="pt-val">'+raw+'</span>';
+        } else {
+          cell.innerHTML = '<span class="pt-num">'+el.AtomicNumber+'</span><span class="pt-sym">'+el.Symbol+'</span><span class="pt-val">—</span>';
+        }
+        cell.addEventListener('click', ()=>openElementPopup(el));
+        cell.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter' || ev.key===' '){ ev.preventDefault(); openElementPopup(el); } });
+      } else if((row===6 || row===7) && col===3){
+        cell.className = 'pt-trend-cell pt-no-data';
+        cell.textContent = row===6 ? '57–71' : '89–103';
+      } else {
+        cell.className = 'pt-trend-cell pt-no-data';
+        cell.style.visibility = 'hidden';
+      }
+      trendGridEl.appendChild(cell);
+    }
+  }
+}
+
+renderTrendGrid();
 </script>
 </body>
 </html>
