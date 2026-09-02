@@ -313,6 +313,20 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
   .pt-trend-cell.pt-no-data{background:var(--bg-panel-2) !important; color:var(--ink-faint) !important; cursor:default;}
   .pt-trend-cell.pt-no-data:hover{transform:none; box-shadow:none; border-color:rgba(255,255,255,0.08);}
 
+  /* ===== trend line+dot chart ===== */
+  .pt-chart-wrap{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:22px 22px 10px; margin-top:26px;}
+  .pt-chart-head{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:10px; flex-wrap:wrap;}
+  .pt-chart-head h4{font-family:var(--display); font-size:16px; font-weight:600;}
+  .pt-chart-head span{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint);}
+  .pt-chart-scroll{overflow-x:auto;}
+  .pt-chart-svg{display:block; min-width:900px;}
+  .pt-chart-svg .pt-axis-line{stroke:var(--grid-line); stroke-width:1;}
+  .pt-chart-svg .pt-grid-line{stroke:var(--grid-line); stroke-width:1; stroke-dasharray:3 4;}
+  .pt-chart-svg .pt-axis-label{fill:var(--ink-faint); font-family:var(--mono); font-size:9.5px;}
+  .pt-chart-svg .pt-chart-line{fill:none; stroke:var(--gold); stroke-width:1.6; stroke-linejoin:round;}
+  .pt-chart-svg .pt-chart-dot{cursor:pointer; transition:r .1s ease;}
+  .pt-chart-svg .pt-chart-dot:hover{r:5.5;}
+
   /* ===== popup ===== */
   .pt-overlay{
     position:fixed; inset:0; background:rgba(5,7,10,0.6); backdrop-filter:blur(2px);
@@ -398,6 +412,16 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
     <div class="pt-trend-scale" id="ptTrendScale"></div>
     <div class="pt-scroll">
       <div class="pt-trend-grid" id="ptTrendGrid"></div>
+    </div>
+
+    <div class="pt-chart-wrap">
+      <div class="pt-chart-head">
+        <h4 id="ptChartTitle">Atomic Number vs. Property</h4>
+        <span id="ptChartSub"></span>
+      </div>
+      <div class="pt-chart-scroll">
+        <svg class="pt-chart-svg" id="ptChartSvg" viewBox="0 0 1180 380" preserveAspectRatio="xMinYMin meet"></svg>
+      </div>
     </div>
   </section>
 </main>
@@ -649,6 +673,75 @@ function renderTrendGrid(){
       trendGridEl.appendChild(cell);
     }
   }
+
+  renderTrendChart(prop, min, max);
+}
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs){
+  const el = document.createElementNS(SVG_NS, tag);
+  for(const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+
+function renderTrendChart(prop, min, max){
+  const svg = document.getElementById('ptChartSvg');
+  svg.innerHTML = '';
+  document.getElementById('ptChartTitle').textContent = 'Atomic Number vs. ' + prop.label;
+  document.getElementById('ptChartSub').textContent = prop.unit ? ('values in ' + prop.unit) : '';
+
+  const W = 1180, H = 380;
+  const padL = 56, padR = 24, padT = 18, padB = 40;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  const points = PT_ELEMENTS
+    .map(e=>({ z: parseInt(e.AtomicNumber,10), v: prop.parse(e[prop.key]), el: e }))
+    .filter(p=>!isNaN(p.v) && p.v !== null)
+    .sort((a,b)=>a.z-b.z);
+
+  const xOf = z => padL + ((z-1)/117) * plotW;
+  const yOf = v => padT + plotH - ((v-min)/(max-min || 1)) * plotH;
+
+  // gridlines + y-axis labels (5 steps)
+  for(let i=0;i<=4;i++){
+    const val = min + (max-min)*(i/4);
+    const y = yOf(val);
+    svg.appendChild(svgEl('line',{class:'pt-grid-line', x1:padL, x2:W-padR, y1:y, y2:y}));
+    const label = svgEl('text',{class:'pt-axis-label', x:padL-8, y:y+3, 'text-anchor':'end'});
+    label.textContent = Number(val.toFixed(2)).toLocaleString();
+    svg.appendChild(label);
+  }
+  // x-axis labels every 10
+  for(let z=1; z<=118; z+=10){
+    const x = xOf(z);
+    svg.appendChild(svgEl('line',{class:'pt-axis-line', x1:x, x2:x, y1:padT, y2:H-padB}));
+    const label = svgEl('text',{class:'pt-axis-label', x:x, y:H-padB+16, 'text-anchor':'middle'});
+    label.textContent = z;
+    svg.appendChild(label);
+  }
+  svg.appendChild(svgEl('line',{class:'pt-axis-line', x1:padL, x2:W-padR, y1:H-padB, y2:H-padB}));
+
+  // connecting line — break the path where atomic numbers aren't consecutive
+  // (so missing-data elements leave a visible gap instead of a false connection)
+  let d = '';
+  let prevZ = null;
+  points.forEach(p=>{
+    const cmd = (prevZ !== null && p.z === prevZ+1) ? 'L' : 'M';
+    d += `${cmd}${xOf(p.z).toFixed(1)},${yOf(p.v).toFixed(1)} `;
+    prevZ = p.z;
+  });
+  svg.appendChild(svgEl('path',{class:'pt-chart-line', d}));
+
+  // dots
+  points.forEach(p=>{
+    const color = CAT_COLORS[p.el.catClass] || CAT_COLORS.unknown;
+    const dot = svgEl('circle',{class:'pt-chart-dot', cx:xOf(p.z), cy:yOf(p.v), r:3.4, fill:color});
+    const title = svgEl('title',{});
+    title.textContent = `${p.el.Name} (${p.el.Symbol}) — ${p.v} ${prop.unit}`;
+    dot.appendChild(title);
+    dot.addEventListener('click', ()=>openElementPopup(p.el));
+    svg.appendChild(dot);
+  });
 }
 
 renderTrendGrid();
