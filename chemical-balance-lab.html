@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chapter 4: Carbon and its Compounds — Graviton Academy</title>
-<meta name="description" content="CBSE Class 10 Science, Chapter 4: Carbon and its Compounds. Carbon's ability to form long chains and rings (catenation) is what makes organic chemistry possible — this chapter covers how those compounds are named, classified, and how they react.">
-<link rel="canonical" href="https://academy.gravitonlaboratories.workers.dev/class-10-ch4-carbon-compounds.html">
+<title>Chemical Balance Lab — Graviton Academy</title>
+<meta name="description" content="Balance chemical equations interactively — pick a reaction, drag the coefficient sliders, and watch the atom counts and molecule diagram update live until both sides match.">
+<link rel="canonical" href="https://academy.gravitonlaboratories.workers.dev/chemical-balance-lab.html">
 
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
@@ -13,13 +13,13 @@
 <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="Chapter 4: Carbon and its Compounds — Graviton Academy">
-<meta property="og:description" content="CBSE Class 10 Science, Chapter 4: Carbon and its Compounds. Carbon's ability to form long chains and rings (catenation) is what makes organic chemistry possible — this chapter covers how those compounds are named, classified, and how they react.">
+<meta property="og:title" content="Chemical Balance Lab — Graviton Academy">
+<meta property="og:description" content="Balance chemical equations interactively — pick a reaction, drag the coefficient sliders, and watch the atom counts and molecule diagram update live until both sides match.">
 <meta property="og:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
-<meta property="og:url" content="https://academy.gravitonlaboratories.workers.dev/class-10-ch4-carbon-compounds.html">
+<meta property="og:url" content="https://academy.gravitonlaboratories.workers.dev/chemical-balance-lab.html">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Chapter 4: Carbon and its Compounds — Graviton Academy">
-<meta name="twitter:description" content="CBSE Class 10 Science, Chapter 4: Carbon and its Compounds. Carbon's ability to form long chains and rings (catenation) is what makes organic chemistry possible — this chapter covers how those compounds are named, classified, and how they react.">
+<meta name="twitter:title" content="Chemical Balance Lab — Graviton Academy">
+<meta name="twitter:description" content="Balance chemical equations interactively — pick a reaction, drag the coefficient sliders, and watch the atom counts and molecule diagram update live until both sides match.">
 <meta name="twitter:image" content="https://academy.gravitonlaboratories.workers.dev/assets/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -262,8 +262,84 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
 }
 .replace-note .rn-icon{color:var(--gold); font-size:15px; flex-shrink:0;}
 .replace-note code{background:var(--bg-panel-2); padding:2px 6px; border-radius:6px; font-family:var(--mono); font-size:11.5px; color:var(--ink);}
+
+  /* ===== CHEMICAL BALANCE LAB ===== */
+  .cb-wrap{padding-bottom:70px;}
+  .cb-reaction-tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px;}
+  .cb-reaction-tab{
+    background:var(--bg-panel-2); border:1px solid var(--grid-line); color:var(--ink-dim); font-family:var(--mono);
+    font-size:12.5px; padding:9px 16px; border-radius:100px; cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .cb-reaction-tab:hover{color:var(--ink); border-color:rgba(255,255,255,0.2);}
+  .cb-reaction-tab.active{background:var(--gold); color:#151109; border-color:transparent;}
+
+  .cb-panel{background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:var(--radius); padding:30px 30px 26px;}
+
+  .cb-equation{
+    display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:10px;
+    font-family:var(--display); font-size:clamp(20px,3vw,28px); text-align:center; padding:10px 0 30px;
+  }
+  .cb-coef{
+    display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:30px; padding:0 6px;
+    border-radius:50%; background:var(--bg-panel-2); border:2px solid var(--gold); color:var(--gold);
+    font-family:var(--mono); font-size:15px; font-weight:700; transition:border-color .15s ease, color .15s ease, transform .15s ease;
+  }
+  .cb-coef.is-one{opacity:.35; border-color:var(--grid-line); color:var(--ink-faint);}
+  .cb-formula sub{font-size:0.62em;}
+  .cb-plus, .cb-arrow{color:var(--ink-faint); font-size:0.8em; margin:0 2px;}
+  .cb-arrow{font-size:1em; color:var(--ink-dim);}
+
+  .cb-columns{display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-bottom:30px;}
+  @media(max-width:760px){ .cb-columns{grid-template-columns:1fr; gap:24px;} }
+  .cb-col-label{font-family:var(--mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); text-align:center; margin-bottom:16px;}
+  .cb-species{display:flex; flex-direction:column; gap:18px;}
+  .cb-molecule-row{display:flex; align-items:center; justify-content:center; gap:10px; min-height:34px; flex-wrap:wrap;}
+  .cb-molecule-unit{display:flex; align-items:center; gap:2px; padding:3px; border-radius:20px; background:rgba(255,255,255,0.03);}
+  .cb-atom{width:13px; height:13px; border-radius:50%; box-shadow:0 0 0 1.5px rgba(5,7,10,0.5) inset;}
+  .cb-molecule-overflow{font-family:var(--mono); font-size:12px; color:var(--ink-faint); align-self:center;}
+
+  .cb-atom-bars{display:flex; flex-direction:column; gap:10px; margin-bottom:26px;}
+  .cb-atom-bar-row{display:grid; grid-template-columns:56px 1fr 46px 1fr 56px; align-items:center; gap:10px; font-family:var(--mono); font-size:12.5px;}
+  .cb-atom-bar-row .cb-count{color:var(--ink-dim);}
+  .cb-atom-bar-row .cb-count.left{text-align:right;}
+  .cb-atom-bar-track{height:8px; border-radius:6px; background:var(--bg-panel-2); overflow:hidden; position:relative;}
+  .cb-atom-bar-track.left .cb-atom-bar-fill{position:absolute; right:0; top:0; bottom:0; border-radius:6px;}
+  .cb-atom-bar-track.right .cb-atom-bar-fill{position:absolute; left:0; top:0; bottom:0; border-radius:6px;}
+  .cb-atom-el{text-align:center; font-weight:700; color:var(--ink);}
+  .cb-atom-el.balanced{color:#4CD971;}
+  .cb-atom-el.unbalanced{color:#F45B69;}
+
+  .cb-status{
+    display:flex; align-items:center; gap:12px; justify-content:center; padding:16px 20px; border-radius:12px;
+    font-family:var(--mono); font-size:14px; margin-bottom:28px; border:1px solid var(--grid-line); background:var(--bg-panel-2);
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .cb-status.balanced{border-color:#4CD971; background:rgba(76,217,113,0.08); color:#4CD971;}
+  .cb-status.unbalanced{border-color:rgba(244,91,105,0.4); color:#ff9aa3;}
+  .cb-status-dot{width:8px; height:8px; border-radius:50%; background:currentColor; flex-shrink:0;}
+
+  .cb-sliders{display:flex; flex-direction:column; gap:14px;}
+  .cb-slider-row{display:grid; grid-template-columns:130px 1fr 44px; align-items:center; gap:16px;}
+  .cb-slider-label{font-family:var(--display); font-size:16px;}
+  .cb-slider-row input[type=range]{
+    -webkit-appearance:none; width:100%; height:4px; border-radius:4px; background:var(--grid-line); outline:none;
+  }
+  .cb-slider-row input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--gold); cursor:pointer;
+    box-shadow:0 2px 6px rgba(0,0,0,0.4); border:2px solid #151109;
+  }
+  .cb-slider-row input[type=range]::-moz-range-thumb{
+    width:18px; height:18px; border-radius:50%; background:var(--gold); cursor:pointer; border:2px solid #151109;
+  }
+  .cb-slider-val{font-family:var(--mono); font-size:15px; text-align:center; color:var(--ink);}
+  .cb-reset-row{display:flex; justify-content:flex-end; margin-top:20px;}
+  .cb-reset-btn{
+    background:none; border:1px solid var(--grid-line); color:var(--ink-dim); font-family:var(--mono); font-size:12px;
+    padding:8px 16px; border-radius:100px; cursor:pointer; transition:border-color .15s ease, color .15s ease;
+  }
+  .cb-reset-btn:hover{color:var(--ink); border-color:rgba(255,255,255,0.25);}
 </style>
-</head>
+
 <body>
 <header>
 <nav>
@@ -275,7 +351,7 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
     <a href="index.html#subjects" class="">Subjects</a>
 <a href="3d-lab.html" class="">3D Lab</a>
 <a href="periodic-table.html" class="">Periodic Table</a>
-<a href="chemical-balance-lab.html" class="">Chemical Balance Lab</a>
+<a href="chemical-balance-lab.html" class="current">Chemical Balance Lab</a>
 <a href="previous-year-papers.html" class="">Previous Papers</a>
 <a href="pricing.html" class="">Pricing</a>
 <a href="about.html" class="">About</a>
@@ -288,70 +364,40 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
   <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
 </nav>
 </header>
-<nav class="breadcrumb wrap" aria-label="Breadcrumb"><a href="index.html">Home</a> <span class="crumb-sep">/</span> <a href="class-10-syllabus.html">Class 10 Syllabus</a> <span class="crumb-sep">/</span> <span class="crumb-current">Ch 4: Carbon and its Compounds</span></nav>
+<nav class="breadcrumb wrap" aria-label="Breadcrumb"><a href="index.html">Home</a> <span class="crumb-sep">/</span> <span class="crumb-current">Chemical Balance Lab</span></nav>
 <main>
-  <section class="wrap">
-    <div class="ch-nav-strip">
-      <a href="class-10-ch3-metals-nonmetals.html">← Chapter 03</a>
-      <a href="class-10-syllabus.html" class="mid">All chapters</a>
-      <a href="class-10-ch5-life-processes.html">Chapter 05 →</a>
-    </div>
-  </section>
-
   <section class="page-hero wrap" style="padding-top:36px;">
     <div class="ch-meta">
-      <span class="ch-chip unit">Unit I · Chemical Substances</span>
-      <span class="ch-chip">Chapter 04 of 13</span>
-      <span class="ch-chip">CBSE Class 10</span>
+      <span class="ch-chip unit">Interactive Reference</span>
     </div>
-    <h1>Carbon and its Compounds</h1>
-    <p class="lead">Carbon's ability to form long chains and rings (catenation) is what makes organic chemistry possible — this chapter covers how those compounds are named, classified, and how they react.</p>
+    <h1>Balance the equation. Watch the atoms line up.</h1>
+    <p class="lead">Pick a reaction, drag the coefficient sliders, and watch the molecule diagram and atom counts update live — until both sides finally match.</p>
   </section>
 
-  <section class="wrap" style="padding-top:0;">
-    <div class="block-section">
-    <div class="block-label"><span class="num">1</span><h2>Data — what this chapter covers</h2></div>
-    <ul class="topics-list" style="max-width:680px;"><li>Covalent bonding and the versatile nature of carbon</li><li>Saturated and unsaturated hydrocarbons</li><li>Homologous series and nomenclature of carbon compounds</li><li>Chemical properties: combustion, oxidation, addition, substitution</li><li>Ethanol, ethanoic acid, soaps and detergents</li></ul>
-    <div class="key-terms"><span class="term">Catenation</span><span class="term">Covalent bond</span><span class="term">Homologous series</span><span class="term">Functional group</span><span class="term">Saturated</span><span class="term">Unsaturated</span></div>
-  </div><div class="block-section">
-    <div class="block-label"><span class="num">2</span><h2>Diagram</h2></div>
-    <div class="diagram-box">
-      <div class="db-icon">🖼</div>
-      <div class="db-title">Homologous series ladder: methane → ethane → propane → butane</div>
-      <div class="db-hint">Replace this box with an &lt;img&gt; tag pointing to your own diagram, e.g. <code>assets/images/ch4-diagram.png</code></div>
-    </div>
-  </div><div class="block-section">
-    <div class="block-label"><span class="num">3</span><h2>3D model</h2></div>
-    <p style="color:var(--ink-dim); font-size:14px; max-width:680px; margin-bottom:16px;">Methane, ethanol, ethanoic acid, ethyne and ethene — the core molecules of this chapter — are all in the CBSE Library below, with correctly placed hydrogens on every carbon.</p>
-    <div class="lab-embed"><iframe src="molecule-lab.html" title="Molecule Lab" loading="lazy"></iframe></div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:10px;">
-      <div class="compound-chips"><span class="chip">CH₄</span><span class="chip">C₂H₅OH</span><span class="chip">CH₃COOH</span><span class="chip">C₂H₂</span><span class="chip">C₂H₄</span></div>
-      <a class="btn-secondary" href="molecule-lab.html" target="_blank">Open full tool ↗</a>
-    </div>
-  </div><div class="block-section">
-    <div class="block-label"><span class="num">4</span><h2>Video</h2></div>
-    <div class="video-box" id="videoBox">
-      <div class="vb-empty">
-        <div class="vb-icon">▶</div>
-        <div class="vb-title">No video linked yet</div>
-        <div class="vb-hint">Set <code>VIDEO_ID</code> near the top of this page's script to a YouTube video ID and it will embed automatically here.</div>
+  <section class="wrap cb-wrap">
+    <div class="cb-reaction-tabs" id="cbReactionTabs"></div>
+
+    <div class="cb-panel">
+      <div class="cb-equation" id="cbEquation"></div>
+
+      <div class="cb-columns">
+        <div>
+          <div class="cb-col-label">Reactants</div>
+          <div class="cb-species" id="cbReactants"></div>
+        </div>
+        <div>
+          <div class="cb-col-label">Products</div>
+          <div class="cb-species" id="cbProducts"></div>
+        </div>
       </div>
-    </div>
-    <script>
-      const VIDEO_ID = null; // e.g. "dQw4w9WgXcQ" — set this to embed a video automatically
-      if (VIDEO_ID) {
-        document.getElementById('videoBox').innerHTML =
-          '<iframe src="https://www.youtube.com/embed/' + VIDEO_ID + '" title="Chapter video" allowfullscreen></iframe>';
-      }
-    </script>
-  </div>
-  </section>
 
-  <section class="wrap">
-    <div class="ch-nav-strip" style="border-top:none; border-bottom:1px solid var(--grid-line); padding-bottom:30px;">
-      <a href="class-10-ch3-metals-nonmetals.html">← Chapter 03</a>
-      <a href="class-10-syllabus.html" class="mid">All chapters</a>
-      <a href="class-10-ch5-life-processes.html">Chapter 05 →</a>
+      <div class="cb-atom-bars" id="cbAtomBars"></div>
+      <div class="cb-status" id="cbStatus"></div>
+
+      <div class="cb-sliders" id="cbSliders"></div>
+      <div class="cb-reset-row">
+        <button class="cb-reset-btn" id="cbResetBtn">Reset coefficients</button>
+      </div>
     </div>
   </section>
 </main>
@@ -371,6 +417,8 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
       <a href="class-10-syllabus.html">Class 10 Syllabus</a>
       <a href="previous-year-papers.html">Previous Year Papers</a>
       <a href="3d-lab.html">3D Lab</a>
+      <a href="periodic-table.html">Periodic Table</a>
+      <a href="chemical-balance-lab.html">Chemical Balance Lab</a>
       <a href="pricing.html">Pricing</a>
       <a href="faq.html">FAQ</a>
     </div>
@@ -396,6 +444,230 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
 </footer>
 <script>document.getElementById('navToggle').addEventListener('click', ()=>{
   document.getElementById('navLinks').classList.toggle('open');
-});</script>
+});
+
+// ---- element colors for the little atom dots ----
+const CB_COLORS = {
+  H:'#4CD971', O:'#E8B75B', C:'#5EC8F8', N:'#7C8CFF', Na:'#C792FF',
+  Cl:'#38D6C0', Fe:'#F45B69', Al:'#FF8A65', K:'#FFB35C', Mg:'#9C8CFF',
+  S:'#FFD35C', Ca:'#6BD6A8', Zn:'#B8C4D9'
+};
+function atomColor(el){ return CB_COLORS[el] || '#8A93A6'; }
+
+// ---- formula parser: "Fe2O3" -> {Fe:2, O:3} ----
+function parseFormula(formula){
+  const counts = {};
+  const re = /([A-Z][a-z]?)(\d*)/g;
+  let m;
+  while((m = re.exec(formula)) !== null){
+    if(!m[1]) continue;
+    const el = m[1];
+    const n = m[2] ? parseInt(m[2],10) : 1;
+    counts[el] = (counts[el]||0) + n;
+  }
+  return counts;
+}
+
+// ---- formula display: "Fe2O3" -> "Fe<sub>2</sub>O<sub>3</sub>" ----
+function displayFormula(formula){
+  return formula.replace(/([A-Z][a-z]?)(\d+)/g, '$1<sub>$2</sub>');
+}
+
+// ---- reaction presets ----
+const REACTIONS = [
+  { id:'water', label:'H2 + O2 → H2O',
+    reactants:[{formula:'H2', coef:1},{formula:'O2', coef:1}],
+    products:[{formula:'H2O', coef:1}] },
+  { id:'ammonia', label:'N2 + H2 → NH3',
+    reactants:[{formula:'N2', coef:1},{formula:'H2', coef:1}],
+    products:[{formula:'NH3', coef:1}] },
+  { id:'methane', label:'CH4 + O2 → CO2 + H2O',
+    reactants:[{formula:'CH4', coef:1},{formula:'O2', coef:1}],
+    products:[{formula:'CO2', coef:1},{formula:'H2O', coef:1}] },
+  { id:'rust', label:'Fe + O2 → Fe2O3',
+    reactants:[{formula:'Fe', coef:1},{formula:'O2', coef:1}],
+    products:[{formula:'Fe2O3', coef:1}] },
+  { id:'salt', label:'Na + Cl2 → NaCl',
+    reactants:[{formula:'Na', coef:1},{formula:'Cl2', coef:1}],
+    products:[{formula:'NaCl', coef:1}] },
+  { id:'aluminium', label:'Al + HCl → AlCl3 + H2',
+    reactants:[{formula:'Al', coef:1},{formula:'HCl', coef:1}],
+    products:[{formula:'AlCl3', coef:1},{formula:'H2', coef:1}] },
+  { id:'propane', label:'C3H8 + O2 → CO2 + H2O',
+    reactants:[{formula:'C3H8', coef:1},{formula:'O2', coef:1}],
+    products:[{formula:'CO2', coef:1},{formula:'H2O', coef:1}] },
+  { id:'kclo3', label:'KClO3 → KCl + O2',
+    reactants:[{formula:'KClO3', coef:1}],
+    products:[{formula:'KCl', coef:1},{formula:'O2', coef:1}] },
+];
+
+let current = JSON.parse(JSON.stringify(REACTIONS[0]));
+
+const tabsEl = document.getElementById('cbReactionTabs');
+REACTIONS.forEach(r=>{
+  const btn = document.createElement('button');
+  btn.className = 'cb-reaction-tab' + (r.id===current.id ? ' active':'');
+  btn.textContent = r.label;
+  btn.dataset.id = r.id;
+  btn.addEventListener('click', ()=>{
+    current = JSON.parse(JSON.stringify(REACTIONS.find(x=>x.id===r.id)));
+    document.querySelectorAll('.cb-reaction-tab').forEach(b=>b.classList.toggle('active', b.dataset.id===r.id));
+    render();
+  });
+  tabsEl.appendChild(btn);
+});
+
+document.getElementById('cbResetBtn').addEventListener('click', ()=>{
+  current.reactants.forEach(s=>s.coef=1);
+  current.products.forEach(s=>s.coef=1);
+  render();
+});
+
+function totalAtoms(species){
+  const totals = {};
+  species.forEach(s=>{
+    const parsed = parseFormula(s.formula);
+    for(const el in parsed){
+      totals[el] = (totals[el]||0) + parsed[el]*s.coef;
+    }
+  });
+  return totals;
+}
+
+function moleculeUnit(formula){
+  const counts = parseFormula(formula);
+  const unit = document.createElement('div');
+  unit.className = 'cb-molecule-unit';
+  Object.keys(counts).forEach(el=>{
+    for(let i=0;i<counts[el];i++){
+      const dot = document.createElement('span');
+      dot.className = 'cb-atom';
+      dot.style.background = atomColor(el);
+      unit.appendChild(dot);
+    }
+  });
+  return unit;
+}
+
+function renderSpeciesColumn(containerEl, species){
+  containerEl.innerHTML = '';
+  species.forEach(s=>{
+    const row = document.createElement('div');
+    row.className = 'cb-molecule-row';
+    const maxDraw = 6;
+    const drawCount = Math.min(s.coef, maxDraw);
+    for(let i=0;i<drawCount;i++){
+      row.appendChild(moleculeUnit(s.formula));
+    }
+    if(s.coef > maxDraw){
+      const overflow = document.createElement('span');
+      overflow.className = 'cb-molecule-overflow';
+      overflow.textContent = '× ' + s.coef;
+      row.appendChild(overflow);
+    }
+    containerEl.appendChild(row);
+  });
+}
+
+function render(){
+  renderDisplay();
+  renderSliders();
+}
+
+function renderDisplay(){
+  // equation
+  const eq = document.getElementById('cbEquation');
+  eq.innerHTML = '';
+  function addSide(species){
+    species.forEach((s,i)=>{
+      if(i>0){
+        const plus = document.createElement('span');
+        plus.className='cb-plus'; plus.textContent='+';
+        eq.appendChild(plus);
+      }
+      const coef = document.createElement('span');
+      coef.className = 'cb-coef' + (s.coef===1 ? ' is-one':'');
+      coef.textContent = s.coef;
+      eq.appendChild(coef);
+      const f = document.createElement('span');
+      f.className = 'cb-formula';
+      f.innerHTML = displayFormula(s.formula);
+      eq.appendChild(f);
+    });
+  }
+  addSide(current.reactants);
+  const arrow = document.createElement('span');
+  arrow.className='cb-arrow'; arrow.textContent='→';
+  eq.appendChild(arrow);
+  addSide(current.products);
+
+  // molecule diagrams
+  renderSpeciesColumn(document.getElementById('cbReactants'), current.reactants);
+  renderSpeciesColumn(document.getElementById('cbProducts'), current.products);
+
+  // atom count bars
+  const reactantTotals = totalAtoms(current.reactants);
+  const productTotals = totalAtoms(current.products);
+  const allEls = Array.from(new Set([...Object.keys(reactantTotals), ...Object.keys(productTotals)])).sort();
+  const maxCount = Math.max(1, ...allEls.map(el=>Math.max(reactantTotals[el]||0, productTotals[el]||0)));
+
+  const barsEl = document.getElementById('cbAtomBars');
+  barsEl.innerHTML = '';
+  let allBalanced = true;
+  const mismatches = [];
+  allEls.forEach(el=>{
+    const lv = reactantTotals[el]||0, rv = productTotals[el]||0;
+    const bal = lv === rv;
+    if(!bal){ allBalanced = false; mismatches.push(el); }
+    const color = atomColor(el);
+    const row = document.createElement('div');
+    row.className = 'cb-atom-bar-row';
+    row.innerHTML = `
+      <span class="cb-count left">${lv}</span>
+      <span class="cb-atom-bar-track left"><span class="cb-atom-bar-fill" style="width:${(lv/maxCount*100)}%; background:${color};"></span></span>
+      <span class="cb-atom-el ${bal?'balanced':'unbalanced'}">${el} ${bal?'=':'≠'}</span>
+      <span class="cb-atom-bar-track right"><span class="cb-atom-bar-fill" style="width:${(rv/maxCount*100)}%; background:${color};"></span></span>
+      <span class="cb-count">${rv}</span>
+    `;
+    barsEl.appendChild(row);
+  });
+
+  // status
+  const statusEl = document.getElementById('cbStatus');
+  if(allBalanced){
+    statusEl.className = 'cb-status balanced';
+    statusEl.innerHTML = '<span class="cb-status-dot"></span> Balanced! Every atom count matches on both sides.';
+  } else {
+    statusEl.className = 'cb-status unbalanced';
+    statusEl.innerHTML = '<span class="cb-status-dot"></span> Not balanced — mismatched atoms: ' + mismatches.join(', ');
+  }
+}
+
+function renderSliders(){
+  const slidersEl = document.getElementById('cbSliders');
+  slidersEl.innerHTML = '';
+  function addSlider(s){
+    const row = document.createElement('div');
+    row.className = 'cb-slider-row';
+    row.innerHTML = `
+      <span class="cb-slider-label">${displayFormula(s.formula)}</span>
+      <input type="range" min="1" max="8" step="1" value="${s.coef}">
+      <span class="cb-slider-val">${s.coef}</span>
+    `;
+    const input = row.querySelector('input');
+    const valEl = row.querySelector('.cb-slider-val');
+    input.addEventListener('input', ()=>{
+      s.coef = parseInt(input.value,10);
+      valEl.textContent = s.coef;
+      renderDisplay();
+    });
+    slidersEl.appendChild(row);
+  }
+  current.reactants.forEach(addSlider);
+  current.products.forEach(addSlider);
+}
+
+render();
+</script>
 </body>
 </html>
