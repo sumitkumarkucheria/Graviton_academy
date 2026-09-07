@@ -262,6 +262,57 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
 }
 .replace-note .rn-icon{color:var(--gold); font-size:15px; flex-shrink:0;}
 .replace-note code{background:var(--bg-panel-2); padding:2px 6px; border-radius:6px; font-family:var(--mono); font-size:11.5px; color:var(--ink);}
+
+/* ===== balancing guide + practice ===== */
+.bg-principles{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:22px;}
+@media(max-width:760px){ .bg-principles{grid-template-columns:1fr;} }
+.bg-card{background:var(--bg-panel-2); border:1px solid var(--grid-line); border-radius:14px; padding:20px 22px;}
+.bg-card h3{font-size:16px; margin-bottom:6px; color:var(--ink);}
+.bg-card p{color:var(--ink-dim); font-size:13.5px; line-height:1.55;}
+.bg-example{background:var(--bg-panel-2); border:1px solid var(--grid-line); border-radius:14px; padding:22px; margin-bottom:22px; text-align:center;}
+.bg-example .bg-eq{font-family:var(--mono); font-size:clamp(16px,2.4vw,22px); color:var(--ink); margin-bottom:8px;}
+.bg-example .bg-eq sub{font-size:0.65em;}
+.bg-example p{color:var(--ink-dim); font-size:13px; margin-top:8px;}
+.bg-steps{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+@media(max-width:820px){ .bg-steps{grid-template-columns:1fr;} }
+.bg-step{background:var(--bg-panel-2); border:1px solid var(--grid-line); border-radius:14px; padding:18px 20px;}
+.bg-step .bg-step-num{font-family:var(--mono); font-size:11px; color:var(--gold); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;}
+.bg-step h4{font-size:14.5px; margin-bottom:8px; color:var(--ink);}
+.bg-step p{color:var(--ink-dim); font-size:12.5px; line-height:1.55;}
+.bg-step table{width:100%; border-collapse:collapse; margin-top:10px; font-family:var(--mono); font-size:11.5px;}
+.bg-step table th, .bg-step table td{padding:5px 6px; border-bottom:1px solid var(--grid-line); text-align:left; color:var(--ink-dim);}
+.bg-step table th{color:var(--ink-faint); font-weight:600;}
+
+.cp-item{background:var(--bg-panel-2); border:1px solid var(--grid-line); border-radius:14px; padding:22px; margin-bottom:16px;}
+.cp-item h4{font-size:15px; margin-bottom:12px; color:var(--ink); font-weight:600;}
+.cp-eq{font-family:var(--mono); text-align:center; font-size:clamp(15px,2.4vw,19px); font-weight:600; color:var(--ink); margin:14px 0; letter-spacing:.01em;}
+.cp-eq sub{font-size:0.65em;}
+.cp-row{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:16px 0; font-family:var(--mono); font-size:13px; color:var(--ink-dim);}
+.cp-coef{
+  width:54px; text-align:center; font-size:15px; background:var(--bg-panel); border:1px solid var(--grid-line); border-radius:8px;
+  color:var(--ink); padding:8px 4px; font-family:var(--mono);
+}
+.cp-controls{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px;}
+.cp-btn{
+  min-height:40px; border:1px solid var(--grid-line); background:var(--bg-panel); color:var(--ink-dim); border-radius:10px;
+  padding:9px 16px; font-family:var(--mono); font-size:12.5px; font-weight:600; cursor:pointer; transition:border-color .15s ease, color .15s ease;
+}
+.cp-btn:hover{border-color:rgba(255,255,255,0.25); color:var(--ink);}
+.cp-btn.primary{background:rgba(232,183,91,0.1); border-color:rgba(232,183,91,0.35); color:var(--gold);}
+.cp-feedback{padding:12px 14px; border-radius:10px; margin-top:12px; font-size:13px; display:none;}
+.cp-feedback.good{display:block; background:rgba(76,217,113,0.1); color:#4CD971; border:1px solid rgba(76,217,113,0.3);}
+.cp-feedback.bad{display:block; background:rgba(244,91,105,0.1); color:#ff9aa3; border:1px solid rgba(244,91,105,0.3);}
+.cp-answer{display:none; margin-top:14px;}
+.cp-answer.show{display:block;}
+.cp-answer-card{border:1px solid rgba(76,217,113,0.3); background:rgba(76,217,113,0.06); border-radius:12px; padding:16px;}
+.cp-answer-card b{color:var(--ink); font-size:12.5px;}
+.cp-answer-card p{color:var(--ink-dim); font-size:12.5px; margin-top:8px;}
+
+.ak-card{background:var(--bg-panel-2); border:1px solid var(--grid-line); border-radius:14px; padding:22px 24px;}
+.ak-card p{font-family:var(--mono); font-size:13.5px; color:var(--ink-dim); margin:8px 0;}
+.ak-card p b{color:var(--gold); margin-right:6px;}
+.ak-card hr{border:none; border-top:1px solid var(--grid-line); margin:14px 0;}
+.ak-card sub{font-size:0.65em;}
 </style>
 </head>
 <body>
@@ -344,6 +395,182 @@ footer{border-top:1px solid var(--grid-line); padding:56px 0 32px;}
           '<iframe src="https://www.youtube.com/embed/' + VIDEO_ID + '" title="Chapter video" allowfullscreen></iframe>';
       }
     </script>
+  </div><div class="block-section">
+    <div class="block-label"><span class="num">5</span><h2>Balancing guide — the 3-step workflow</h2></div>
+    <div class="bg-principles">
+      <div class="bg-card">
+        <h3>Law of Conservation of Mass</h3>
+        <p>Mass can neither be created nor destroyed in a chemical reaction — everything that goes in as a reactant has to come out as a product.</p>
+      </div>
+      <div class="bg-card">
+        <h3>Atomic equality</h3>
+        <p>The number of atoms of every element must be equal on both sides of the equation. That's the entire job of "balancing."</p>
+      </div>
+    </div>
+    <div class="bg-example">
+      <div class="bg-eq">Mg + O<sub>2</sub> → MgO</div>
+      <p>Magnesium and oxygen (reactants) combine to form magnesium oxide (product) — but as written, this equation isn't balanced yet.</p>
+    </div>
+    <div class="bg-steps">
+      <div class="bg-step">
+        <div class="bg-step-num">Step 1</div>
+        <h4>Inventory and box the elements</h4>
+        <p>List the atom count for every element on the reactant side and the product side.</p>
+        <table><tr><th>Element</th><th>Reactants</th><th>Products</th></tr><tr><td>Fe</td><td>1</td><td>3</td></tr><tr><td>H</td><td>2</td><td>2</td></tr><tr><td>O</td><td>1</td><td>4</td></tr></table>
+      </div>
+      <div class="bg-step">
+        <div class="bg-step-num">Step 2</div>
+        <h4>Balance via the compound with the most atoms</h4>
+        <p>Start with the compound that has the highest atom count — here, Fe<sub>3</sub>O<sub>4</sub> — and work outward: 3Fe + H<sub>2</sub>O → Fe<sub>3</sub>O<sub>4</sub> + H<sub>2</sub>, then 4Fe + 4H<sub>2</sub>O → Fe<sub>3</sub>O<sub>4</sub> + 4H<sub>2</sub>.</p>
+      </div>
+      <div class="bg-step">
+        <div class="bg-step-num">Step 3</div>
+        <h4>Final check and state symbols</h4>
+        <p>Verify the atom counts match, then add physical states — (s), (l), (g), (aq).</p>
+        <table><tr><th>Element</th><th>Reactant</th><th>Product</th></tr><tr><td>Fe</td><td>3</td><td>3</td></tr><tr><td>H</td><td>8</td><td>8</td></tr><tr><td>O</td><td>4</td><td>4</td></tr></table>
+      </div>
+    </div>
+    <div class="bg-example" style="margin-top:22px; margin-bottom:0;">
+      <div class="bg-eq">3Fe<sub>(s)</sub> + 4H<sub>2</sub>O<sub>(g)</sub> → Fe<sub>3</sub>O<sub>4(s)</sub> + 4H<sub>2(g)</sub></div>
+      <p>Balanced, with state symbols added — every element matches on both sides.</p>
+    </div>
+  </div><div class="block-section">
+    <div class="block-label"><span class="num">6</span><h2>Interactive practice — balance it yourself</h2></div>
+    <p style="color:var(--ink-dim); font-size:13.5px; max-width:680px; margin-bottom:18px;">Fill in the coefficients, check your answer, or reveal the solution if you get stuck.</p>
+
+    <div class="cp-item">
+      <h4>1. Hydrogen + Chlorine → Hydrogen chloride</h4>
+      <div class="cp-eq">H<sub>2</sub> + Cl<sub>2</sub> → HCl</div>
+      <div class="cp-row">
+        <input class="cp-coef" id="cpA1" type="number" min="1" value="1" aria-label="Hydrogen coefficient">
+        <span>H<sub>2</sub> +</span>
+        <input class="cp-coef" id="cpB1" type="number" min="1" value="1" aria-label="Chlorine coefficient">
+        <span>Cl<sub>2</sub> →</span>
+        <input class="cp-coef" id="cpC1" type="number" min="1" value="1" aria-label="Hydrogen chloride coefficient">
+        <span>HCl</span>
+      </div>
+      <div class="cp-controls">
+        <button class="cp-btn primary" onclick="cpCheck1()">Check answer</button>
+        <button class="cp-btn" onclick="cpReveal('cpAns1')">Show answer</button>
+      </div>
+      <div id="cpFb1" class="cp-feedback"></div>
+      <div id="cpAns1" class="cp-answer">
+        <div class="cp-answer-card"><b>Answer</b><div class="cp-eq">H<sub>2</sub> + Cl<sub>2</sub> → 2HCl</div></div>
+      </div>
+    </div>
+
+    <div class="cp-item">
+      <h4>2. Barium chloride + Aluminium sulphate → Barium sulphate + Aluminium chloride</h4>
+      <div class="cp-eq">BaCl<sub>2</sub> + Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub> → BaSO<sub>4</sub> + AlCl<sub>3</sub></div>
+      <div class="cp-row">
+        <input class="cp-coef" id="cpA2" type="number" min="1" value="1">
+        <span>BaCl<sub>2</sub> +</span>
+        <input class="cp-coef" id="cpB2" type="number" min="1" value="1">
+        <span>Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub> →</span>
+        <input class="cp-coef" id="cpC2" type="number" min="1" value="1">
+        <span>BaSO<sub>4</sub> +</span>
+        <input class="cp-coef" id="cpD2" type="number" min="1" value="1">
+        <span>AlCl<sub>3</sub></span>
+      </div>
+      <div class="cp-controls">
+        <button class="cp-btn primary" onclick="cpCheck2()">Check answer</button>
+        <button class="cp-btn" onclick="cpReveal('cpAns2')">Show answer</button>
+      </div>
+      <div id="cpFb2" class="cp-feedback"></div>
+      <div id="cpAns2" class="cp-answer">
+        <div class="cp-answer-card"><b>Answer</b><div class="cp-eq">3BaCl<sub>2</sub> + Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub> → 3BaSO<sub>4</sub> + 2AlCl<sub>3</sub></div></div>
+      </div>
+    </div>
+
+    <div class="cp-item">
+      <h4>3. Sodium + Water → Sodium hydroxide + Hydrogen</h4>
+      <div class="cp-eq">Na + H<sub>2</sub>O → NaOH + H<sub>2</sub></div>
+      <div class="cp-row">
+        <input class="cp-coef" id="cpA3" type="number" min="1" value="1">
+        <span>Na +</span>
+        <input class="cp-coef" id="cpB3" type="number" min="1" value="1">
+        <span>H<sub>2</sub>O →</span>
+        <input class="cp-coef" id="cpC3" type="number" min="1" value="1">
+        <span>NaOH +</span>
+        <input class="cp-coef" id="cpD3" type="number" min="1" value="1">
+        <span>H<sub>2</sub></span>
+      </div>
+      <div class="cp-controls">
+        <button class="cp-btn primary" onclick="cpCheck3()">Check answer</button>
+        <button class="cp-btn" onclick="cpReveal('cpAns3')">Show answer</button>
+      </div>
+      <div id="cpFb3" class="cp-feedback"></div>
+      <div id="cpAns3" class="cp-answer">
+        <div class="cp-answer-card"><b>Answer</b><div class="cp-eq">2Na + 2H<sub>2</sub>O → 2NaOH + H<sub>2</sub></div></div>
+      </div>
+    </div>
+
+    <p style="color:var(--ink-dim); font-size:13px; max-width:680px; margin:26px 0 10px;">Now write the balanced equations with state symbols:</p>
+
+    <div class="cp-item">
+      <h4>4. Barium chloride + Sodium sulphate</h4>
+      <p style="color:var(--ink-dim); font-size:13px; margin-bottom:10px;">Solutions of barium chloride and sodium sulphate in water react to give insoluble barium sulphate and a solution of sodium chloride.</p>
+      <div class="cp-eq">BaCl<sub>2</sub> + Na<sub>2</sub>SO<sub>4</sub> → BaSO<sub>4</sub> + 2NaCl</div>
+      <div class="cp-controls">
+        <button class="cp-btn primary" onclick="cpReveal('cpAns4')">Show answer with states</button>
+      </div>
+      <div id="cpAns4" class="cp-answer">
+        <div class="cp-answer-card">
+          <b>Answer</b>
+          <div class="cp-eq">BaCl<sub>2</sub> (aq) + Na<sub>2</sub>SO<sub>4</sub> (aq) → BaSO<sub>4</sub> (s) + 2NaCl (aq)</div>
+          <p><b style="color:var(--ink);">(aq)</b> = aqueous solution &nbsp;|&nbsp; <b style="color:var(--ink);">(s)</b> = solid</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cp-item">
+      <h4>5. Sodium hydroxide + Hydrochloric acid</h4>
+      <p style="color:var(--ink-dim); font-size:13px; margin-bottom:10px;">Sodium hydroxide solution reacts with hydrochloric acid solution to produce sodium chloride solution and water.</p>
+      <div class="cp-eq">NaOH + HCl → NaCl + H<sub>2</sub>O</div>
+      <div class="cp-controls">
+        <button class="cp-btn primary" onclick="cpReveal('cpAns5')">Show answer with states</button>
+      </div>
+      <div id="cpAns5" class="cp-answer">
+        <div class="cp-answer-card">
+          <b>Answer</b>
+          <div class="cp-eq">NaOH (aq) + HCl (aq) → NaCl (aq) + H<sub>2</sub>O (l)</div>
+          <p><b style="color:var(--ink);">(aq)</b> = aqueous solution &nbsp;|&nbsp; <b style="color:var(--ink);">(l)</b> = liquid</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function cpVal(id){ return Number(document.getElementById(id).value); }
+      function cpFeedback(id, msg, ok){
+        const e = document.getElementById(id);
+        e.className = 'cp-feedback ' + (ok ? 'good' : 'bad');
+        e.textContent = msg;
+      }
+      function cpCheck1(){
+        const ok = cpVal('cpA1')===1 && cpVal('cpB1')===1 && cpVal('cpC1')===2;
+        cpFeedback('cpFb1', ok ? 'Correct! Hydrogen and chlorine atoms are equal on both sides.' : 'Not balanced yet. Count H and Cl atoms on both sides.', ok);
+      }
+      function cpCheck2(){
+        const ok = cpVal('cpA2')===3 && cpVal('cpB2')===1 && cpVal('cpC2')===3 && cpVal('cpD2')===2;
+        cpFeedback('cpFb2', ok ? 'Correct! All elements are conserved.' : 'Try again. Balance Ba first, then Al, and check Cl and SO4.', ok);
+      }
+      function cpCheck3(){
+        const ok = cpVal('cpA3')===2 && cpVal('cpB3')===2 && cpVal('cpC3')===2 && cpVal('cpD3')===1;
+        cpFeedback('cpFb3', ok ? 'Correct! Na, H and O are balanced.' : 'Not balanced yet. Check sodium first, then hydrogen.', ok);
+      }
+      function cpReveal(id){ document.getElementById(id).classList.add('show'); }
+    </script>
+  </div><div class="block-section">
+    <div class="block-label"><span class="num">7</span><h2>Answer key — all together</h2></div>
+    <div class="ak-card">
+      <p><b>(i)</b> H<sub>2</sub> + Cl<sub>2</sub> → 2HCl</p>
+      <p><b>(ii)</b> 3BaCl<sub>2</sub> + Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub> → 3BaSO<sub>4</sub> + 2AlCl<sub>3</sub></p>
+      <p><b>(iii)</b> 2Na + 2H<sub>2</sub>O → 2NaOH + H<sub>2</sub></p>
+      <hr>
+      <p><b>State symbols</b></p>
+      <p>(i) BaCl<sub>2</sub> (aq) + Na<sub>2</sub>SO<sub>4</sub> (aq) → BaSO<sub>4</sub> (s) + 2NaCl (aq)</p>
+      <p>(ii) NaOH (aq) + HCl (aq) → NaCl (aq) + H<sub>2</sub>O (l)</p>
+    </div>
   </div>
   </section>
 
